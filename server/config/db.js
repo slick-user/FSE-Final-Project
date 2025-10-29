@@ -1,8 +1,54 @@
 const mongoose = require("mongoose");
 
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true
+  },
+  
+  rollNo: {
+    type: String,
+    required: true,
+    unique: true
+  },
+
+  Photo: {
+    type: String
+  },
+
+  role: {
+    type: String,
+    enum: ['student', 'admin'], // Do we want to save Driver as a role for here?
+    default: 'student'
+  },
+
+  disability: {
+    type: Boolean,
+    default: false
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+
+});
+
+const User = mongoose.model('User', userSchema);
+
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI);
+    const URI = process.env.MONGO_URI;
+    //console.log("connecting to:", URI);
+    const conn = await mongoose.connect(URI);
     console.log(`Mongo DB Connected: ${conn.connection.host}`);
   } catch (err) {
     console.error(`Error: ${err.message}`);
@@ -10,4 +56,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+module.exports = {connectDB, User};
