@@ -72,21 +72,23 @@
       </div>
     </section>
 
-    <!-- Service Cards (The HTMX Trigger) -->
-    <h3 class="text-4xl font-bold bg-fastGold text-black inline-block px-6 py-2 mb-12 ml-8">
-      Our Services
-    </h3>
-    
-    <div class="grid grid-cols-1 md:grid-cols-3">
+      <!-- Service Cards (The HTMX Trigger) -->
 
-    <!-- Card 1: On Time Departure -->
-    <div class="relative rounded-xl shadow-lg hover:shadow-2xl transition duration-300 cursor-pointer overflow-hidden
-      card-with-shared-bg card-1"
-      hx-get="/service/on-time" 
-      hx-target="#service-detail-container" 
-      hx-swap="outerHTML" 
-      onclick="loadService('on-time')"
-    >
+    <h3 class="text-4xl font-bold bg-black items-center text-fastGold mb-12">Our Services</h3>
+
+    <!-- divider -->
+    <div class="w-24 h-1 bg-black mx-auto mb-12 rounded-full"></div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-0">
+
+        <!-- Card 1: On Time Departure -->
+        <div class="relative rounded-xl shadow-lg hover:shadow-2xl transition duration-300 cursor-pointer overflow-hidden
+                    card-with-shared-bg card-1"
+            hx-get="/service/on-time" 
+            hx-target="#service-detail-container" 
+            hx-swap="outerHTML" 
+            onclick="loadService('on-time')"
+        >
             <!-- Overlays -->
             <div class="card-overlay"></div>
             <div class="absolute inset-0 card-gradient-1 z-20 opacity-70"></div> 

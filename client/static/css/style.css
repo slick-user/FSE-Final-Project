@@ -1,0 +1,71 @@
+.clip-diagonal {
+  clip-path: polygon(0 0, 65% 0, 10% 100%, 0% 100%);
+}
+
+/* Custom styles for the top dark gradient */
+.header-bg-gradient {
+  position: relative;
+  z-index: 1; 
+}
+        
+.header-bg-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 250px; 
+  background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0) 100%);
+  z-index: -1; 
+  pointer-events: none; 
+}
+
+/* Styles for the shared background image effect */
+.card-with-shared-bg {
+  background-image: url('../images/bus1.jpg'); 
+  background-size: 300% 100%; 
+  background-repeat: no-repeat;
+  overflow: hidden;
+  object-fit: cover;
+  height: 550px;
+  width: 300px;
+}
+
+/* Overlay for card text readability */
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); 
+  z-index: 1;
+  transition: background 0.3s ease;
+}
+
+.card-with-shared-bg:hover .card-overlay {
+  background: rgba(0, 0, 0, 0.6); 
+}
+
+/* Specific background positions for each card */
+.card-1 { background-position: 0% 0%; } 
+.card-2 { background-position: 50% 0%; } 
+.card-3 { background-position: 100% 0%; } 
+
+/* Specific gradients for each card */
+.card-gradient-1 { background: linear-gradient(to bottom, rgba(251, 191, 36, 0.8) 0%, rgba(251, 191, 36, 0) 100%); } 
+.card-gradient-2 { background: linear-gradient(to bottom, rgba(34, 197, 94, 0.8) 0%, rgba(34, 197, 94, 0) 100%); } 
+.card-gradient-3 { background: linear-gradient(to bottom, rgba(59, 130, 246, 0.8) 0%, rgba(59, 130, 246, 0) 100%); } 
+
+/* Placeholder icon styling */
+.placeholder-icon {
+  color: white; 
+}
+
+/* Ensure card content is above overlay and image */
+.card-content {
+  position: relative;
+  z-index: 3; 
+  color: white; 
+  height: 100%; /* Important: Takes full height of the parent card */
+}
