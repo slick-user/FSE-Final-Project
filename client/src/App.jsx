@@ -19,7 +19,6 @@ function App() {
 
   return (
     <>
-
       <div>
         <h1>FAST UBTS </h1>
         <p> {message} </p>
@@ -29,8 +28,7 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
-      </div>
-    
+      </div>    
     </>
 
   )
