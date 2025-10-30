@@ -1,13 +1,210 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>client</title>
+    <title>FAST - UTBS</title>
+    
+    <link rel="stylesheet" href="static/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.9"></script>
+    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              fastBlue: "#0055A4",
+              fastGold: "#FFCC00",
+              fastCyan: "#00E0E0",
+            },
+          },
+        },
+      };
+    </script>
+  
   </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+
+  <body class="font-sans bg-white text-gray-800">
+   
+    <!-- NAVBAR -->
+    <header
+      class="flex justify-between items-center px-8 py-4 bg-black text-white"
+    >
+      <div class="flex items-center space-x-3">
+        <img
+          src="/assets/logo.png"
+          alt="FAST Transport Logo"
+          class="w-10 h-10 rounded-full"
+        />
+        <h1 class="text-2xl font-bold">FAST - UTBS</h1>
+      </div>
+      <nav class="space-x-6">
+        <a href="#" class="hover:text-fastGold">Home</a>
+        <a href="#allocator" class="hover:text-fastGold">Bus Allocator</a>
+        <a href="#team" class="hover:text-fastGold">Meet The Team</a>
+        <button class="bg-white text-black px-3 py-1 rounded hover:bg-fastGold transition">
+          Login
+        </button>
+      </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section
+      class="relative text-white bg-cover bg-center"
+      style="background-image: url('static/images/bus_stop.jpg')"
+    >
+      <div class="bg-black/50 p-12 md:p-24">
+        <h2 class="text-5xl font-extrabold text-fastGold mb-6">
+          FAST University Bus Transport System
+        </h2>
+        <p class="max-w-2xl text-lg leading-relaxed">
+          Accommodating students and faculty of FAST Islamabad campus. FAST
+          NUCE's Bus Service is operated by a 3rd party known as
+          <span class="text-fastGold font-semibold">Uzair Bus Transport</span>
+          which provides passengers transport all across the city of Islamabad
+          as well as some locations in the neighboring city of Rawalpindi.
+        </p>
+      </div>
+    </section>
+
+    <!-- OUR SERVICES -->
+    <section 
+      class="bg-black text-white py-10"
+      style="background-image: url('static/images/bus1.jpg');"
+    >
+
+      <!-- translucent diagonal overlay -->
+      <div class="absolute inset-0">
+       <div class="absolute left-0 top-0 w-full h-full bg-gradient-to-br from-black/70 to-transparent clip-triangle"></div>
+      </div>
+
+      <h3
+        class="text-3xl font-bold bg-fastGold text-black inline-block px-4 py-1 mb-6"
+      >
+        Our Services
+      </h3>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <!-- On Time Departure -->
+        <div class="relative bg-cover bg-center p-10 flex flex-col justify-end">
+          <div class="bg-black/60 p-4">
+            <h4 class="font-bold text-lg mb-2">On Time Departure</h4>
+            <p>
+              We take pride in our on-time departures and strict adherence to
+              policies, ensuring a reliable and seamless travel experience.
+            </p>
+          </div>
+        </div>
+
+        <!-- Safe & Comfortable -->
+        <div class="relative bg-cover bg-center p-10 flex flex-col justify-end">
+          <div class="bg-black/60 p-4">
+            <h4 class="font-bold text-lg mb-2">
+              Safe and Comfortable Experience
+            </h4>
+            <p>
+              Our team ensures a safe experience during your transit and a
+              comfortable, state-of-the-art journey in our air-conditioned
+              buses.
+            </p>
+          </div>
+        </div>
+
+        <!-- Professional Drivers -->
+        <div class="relative bg-cover bg-center p-10 flex flex-col justify-end">
+          <div class="bg-black/60 p-4">
+            <h4 class="font-bold text-lg mb-2">Professional Drivers</h4>
+            <p>
+              Our drivers are the core of our service and we assure you they are
+              the example of professionals.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AVAILABLE ROUTES -->
+    <section class="bg-fastCyan text-center py-16">
+      <h3 class="text-4xl font-bold mb-8">Available Routes</h3>
+
+      <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <table class="min-w-full border border-gray-300 text-left">
+          <thead class="bg-gray-800 text-white">
+            <tr>
+              <th class="px-4 py-2">Zone</th>
+              <th class="px-4 py-2">Stop</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b">
+              <td class="px-4 py-2">Islamabad</td>
+              <td class="px-4 py-2">G-9, Kashmir Highway</td>
+            </tr>
+            <tr class="border-b">
+              <td class="px-4 py-2">Islamabad</td>
+              <td class="px-4 py-2">6th Road, Muree Road</td>
+            </tr>
+            <tr class="border-b">
+              <td class="px-4 py-2">Islamabad</td>
+              <td class="px-4 py-2">Khanna Pull Stop, Expressway</td>
+            </tr>
+            <tr class="border-b">
+              <td class="px-4 py-2">Rawalpindi</td>
+              <td class="px-4 py-2">Askari 14, Sector A,B, Main Gate</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2">Rawalpindi</td>
+              <td class="px-4 py-2">Main Peshawar Road</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CUSTOMER FEEDBACK -->
+    <section class="bg-fastCyan py-16">
+      <h3 class="text-2xl font-semibold text-center mb-8">
+        Customer Feedback
+      </h3>
+
+      <div class="flex flex-wrap justify-center gap-6 px-4">
+        <div class="bg-white shadow-md p-6 rounded-xl w-72">
+          <p class="italic">“A terrific piece of praise”</p>
+          <div class="mt-4 text-sm text-gray-600">
+            <p class="font-semibold">Prospective Customer</p>
+            <p>Student of 24th batch</p>
+          </div>
+        </div>
+
+        <div class="bg-white shadow-md p-6 rounded-xl w-72">
+          <p class="italic">“A fantastic bit of feedback”</p>
+          <div class="mt-4 text-sm text-gray-600">
+            <p class="font-semibold">Final Year Student</p>
+            <p>Description</p>
+          </div>
+        </div>
+
+        <div class="bg-white shadow-md p-6 rounded-xl w-72">
+          <p class="italic">“A genuinely glowing review”</p>
+          <div class="mt-4 text-sm text-gray-600">
+            <p class="font-semibold">Name</p>
+            <p>Description</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-black text-gray-300 py-6 text-center text-sm">
+      <div class="flex justify-center items-center mb-4">
+        <span class="material-icons mr-2">link</span> Project Link
+      </div>
+      <p>
+        © 2025 FAST University | Designed by
+        <span class="text-fastGold">EduRoute Team</span>
+      </p>
+      <p class="mt-2">fastutbs.org</p>
+    </footer>
   </body>
 </html>
