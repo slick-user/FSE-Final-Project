@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAST - UTBS | University Bus Transport System</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo-section">
+                    <div class="logo-circle">
+                        <div class="logo-bus">🚌</div>
+                    </div>
+                    <span class="logo-text">FAST - UTBS</span>
+                </div>
+                <nav class="nav-menu">
+                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#routes" class="nav-link">Routes</a>
+                    <a href="#feedback" class="nav-link">Feedback</a>
+                    <button class="login-btn" hx-get="/api/login-form" hx-target="#modal-container" hx-swap="innerHTML">Login</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero-section">
+            <div class="hero-overlay">
+                <div class="container">
+                    <div class="hero-content">
+                        <h1 class="hero-title">
+                            <span class="title-yellow">FAST</span><br>
+                            <span class="title-yellow">University</span><br>
+                            <span class="title-yellow">Bus</span><br>
+                            <span class="title-yellow">Transport</span><br>
+                            <span class="title-yellow">System</span>
+                        </h1>
+                        <p class="hero-description">
+                            Accommodating students and faculty of FAST Islamabad campus. FAST NUCE's Bus Service is operated by a 3rd part known as Uzair Bus Transport Services which provides passengers transport all across the city of Islamabad as well as some locations in the neighboring city of Rawalpindi.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="services-section">
+            <div class="container">
+                <h2 class="section-title">Our Services</h2>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3"/>
+                                <path d="M50 20 L50 50 L70 60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">On Time Departure</h3>
+                        <p class="service-description">We take pride in our on-time service. All buses are adherence to our strict policies ensuring a reliable and seamless travel experience.</p>
+                    </div>
+
+                    <div class="service-card service-card-highlighted">
+                        <div class="service-icon">
+                            <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                                <path d="M50 10 L70 30 L65 35 L50 20 L35 35 L30 30 Z" fill="currentColor"/>
+                                <rect x="35" y="30" width="30" height="35" stroke="currentColor" stroke-width="3" fill="none"/>
+                                <path d="M30 55 L25 65 L30 65 L30 70 L40 70 L40 65 L60 65 L60 70 L70 70 L70 65 L75 65 L70 55" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Safe and Comfortable Experience</h3>
+                        <p class="service-description">Our team ensures a safe experience during your transit and a comfortable state of the art experience in our air conditioned buses.</p>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                                <circle cx="35" cy="40" r="15" stroke="currentColor" stroke-width="3"/>
+                                <circle cx="65" cy="35" r="12" stroke="currentColor" stroke-width="3"/>
+                                <circle cx="75" cy="60" r="10" stroke="currentColor" stroke-width="3"/>
+                                <circle cx="50" cy="75" r="8" stroke="currentColor" stroke-width="3"/>
+                                <circle cx="50" cy="50" r="20" stroke="currentColor" stroke-width="3"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Professional Drivers</h3>
+                        <p class="service-description">Our drivers are the core of our service and we make sure that they are example of professionals.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="routes" class="routes-section">
+            <div class="container">
+                <h2 class="section-title-dark">Available Routes</h2>
+                <div class="routes-table-wrapper">
+                    <div id="routes-container">
+                        <table class="routes-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Zone</th>
+                                    <th>Stop</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Islamabad</td>
+                                    <td>G-9, Kashmir Highway</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Islamabad</td>
+                                    <td>6th Road, Murree Road</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Islamabad</td>
+                                    <td>Kurri Road, Khanna PULL Stop, Expressway</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Islamabad</td>
+                                    <td>Fizaia, Gangal, Express Way</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Islamabad</td>
+                                    <td>Bahria Enclave</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Rawalpindi</td>
+                                    <td>Askari 14, Sector A,B, Main Gate</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Rawalpindi</td>
+                                    <td>Main Peshawar Road</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="feedback" class="feedback-section">
+            <div class="container">
+                <h2 class="section-title-dark">Customer Feedback</h2>
+                <div class="feedback-grid" hx-get="/api/feedback" hx-trigger="load" hx-swap="innerHTML">
+                    <div class="feedback-card">
+                        <p class="feedback-quote">"A terrific piece of praise"</p>
+                        <div class="feedback-author">
+                            <div class="author-avatar"></div>
+                            <div>
+                                <p class="author-name">Prospective Customer</p>
+                                <p class="author-role">Role at Organization</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feedback-card">
+                        <p class="feedback-quote">"A fantastic bit of feedback"</p>
+                        <div class="feedback-author">
+                            <div class="author-avatar"></div>
+                            <div>
+                                <p class="author-name">Final Year Student</p>
+                                <p class="author-role">Student</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feedback-card">
+                        <p class="feedback-quote">"A genuinely glowing review"</p>
+                        <div class="feedback-author">
+                            <div class="author-avatar"></div>
+                            <div>
+                                <p class="author-name">Name</p>
+                                <p class="author-role">Occupation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-link">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    <span>Project Link</span>
+                </div>
+                <div class="footer-right">
+                    <span>fastutbs.org</span>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 FAST University | Designed by EduRoute Team</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="modal-container"></div>
+</body>
+</html>
