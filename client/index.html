@@ -33,7 +33,7 @@
     >
       <div class="flex items-center space-x-3">
         <img
-          src="/assets/logo.png"
+          src="static/images/logo.png"
           alt="FAST Transport Logo"
           class="w-10 h-10 rounded-full"
         />
@@ -51,12 +51,16 @@
 
     <!-- HERO SECTION -->
     <section
-      class="relative text-white bg-cover bg-center"
+      class="relative text-white h-screen w-full bg-cover bg-center"
       style="background-image: url('static/images/bus_stop.jpg')"
-    >
-      <div class="bg-black/50 p-12 md:p-24">
+    > 
+      <!-- translucent diagonal overlay -->
+      <div  class="absolute inset-0 bg-gray-900/40 z-10 clip-diagonal pointer-events-none"> </div>
+     
+      <div class="relative z-20 p-12 md:p-24">
         <h2 class="text-5xl font-extrabold text-fastGold mb-6">
-          FAST University Bus Transport System
+          FAST University <br>
+          Bus Transport System
         </h2>
         <p class="max-w-2xl text-lg leading-relaxed">
           Accommodating students and faculty of FAST Islamabad campus. FAST
@@ -68,61 +72,176 @@
       </div>
     </section>
 
-    <!-- OUR SERVICES -->
-    <section 
-      class="bg-black text-white py-10"
-      style="background-image: url('static/images/bus1.jpg');"
+    <!-- Service Cards (The HTMX Trigger) -->
+    <h3 class="text-4xl font-bold bg-fastGold text-black inline-block px-6 py-2 mb-12 ml-8">
+      Our Services
+    </h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3">
+
+    <!-- Card 1: On Time Departure -->
+    <div class="relative rounded-xl shadow-lg hover:shadow-2xl transition duration-300 cursor-pointer overflow-hidden
+      card-with-shared-bg card-1"
+      hx-get="/service/on-time" 
+      hx-target="#service-detail-container" 
+      hx-swap="outerHTML" 
+      onclick="loadService('on-time')"
     >
+            <!-- Overlays -->
+            <div class="card-overlay"></div>
+            <div class="absolute inset-0 card-gradient-1 z-20 opacity-70"></div> 
 
-      <!-- translucent diagonal overlay -->
-      <div class="absolute inset-0">
-       <div class="absolute left-0 top-0 w-full h-full bg-gradient-to-br from-black/70 to-transparent clip-triangle"></div>
-      </div>
+            <!-- Content: Flexbox layout to push icon down -->
+            <div class="p-6 card-content flex flex-col justify-between">
+                <!-- Top Content -->
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">On Time Departure</h2>
+                    <p class="text-white">We take pride in our on-time departures and strict adherence to policies, ensuring a reliable and seamless travel experience.</p>
+                </div>
 
-      <h3
-        class="text-3xl font-bold bg-fastGold text-black inline-block px-4 py-1 mb-6"
-      >
-        Our Services
-      </h3>
-
-      <div class="grid md:grid-cols-3 gap-4">
-        <!-- On Time Departure -->
-        <div class="relative bg-cover bg-center p-10 flex flex-col justify-end">
-          <div class="bg-black/60 p-4">
-            <h4 class="font-bold text-lg mb-2">On Time Departure</h4>
-            <p>
-              We take pride in our on-time departures and strict adherence to
-              policies, ensuring a reliable and seamless travel experience.
-            </p>
-          </div>
+                <!-- Bottom Placeholder Icon (Pushed down by justify-between) -->
+                <div class="flex justify-start pt-12">
+                    <div class="placeholder-icon">
+                        <!-- SVG Clock Icon for better scaling/design -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white w-24 h-24">
+                            <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div> 
+                </div>
+            </div>
         </div>
 
-        <!-- Safe & Comfortable -->
-        <div class="relative bg-cover bg-center p-10 flex flex-col justify-end">
-          <div class="bg-black/60 p-4">
-            <h4 class="font-bold text-lg mb-2">
-              Safe and Comfortable Experience
-            </h4>
-            <p>
-              Our team ensures a safe experience during your transit and a
-              comfortable, state-of-the-art journey in our air-conditioned
-              buses.
-            </p>
-          </div>
+        <!-- Card 2: Safe and Comfortable Experience -->
+        <div class="relative rounded-xl shadow-lg hover:shadow-2xl transition duration-300 cursor-pointer overflow-hidden
+                    card-with-shared-bg card-2"
+            hx-get="/service/safe" 
+            hx-target="#service-detail-container" 
+            hx-swap="outerHTML" 
+            onclick="loadService('safe')"
+        >
+            <!-- Overlays -->
+            <div class="card-overlay"></div>
+            <div class="absolute inset-0 card-gradient-2 z-20 opacity-70"></div> 
+
+            <!-- Content: Flexbox layout to push icon down -->
+            <div class="p-6 card-content flex flex-col justify-between">
+                <!-- Top Content -->
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">Safe and Comfortable Experience</h2>
+                    <p class="text-white">Our team ensures a safe experience during your transit and a comfortable state of the art experience in our air conditioned buses.</p>
+                </div>
+                
+                <!-- Bottom Placeholder Icon (Pushed down by justify-between) -->
+                <div class="flex justify-center pt-12">
+                    <div class="placeholder-icon">
+                        <!-- SVG Shield Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white w-24 h-24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Professional Drivers -->
-        <div class="relative bg-cover bg-center p-10 flex flex-col justify-end">
-          <div class="bg-black/60 p-4">
-            <h4 class="font-bold text-lg mb-2">Professional Drivers</h4>
-            <p>
-              Our drivers are the core of our service and we assure you they are
-              the example of professionals.
-            </p>
-          </div>
+        <!-- Card 3: Professional Drivers -->
+        <div class="relative rounded-xl shadow-lg hover:shadow-2xl transition duration-300 cursor-pointer overflow-hidden
+                    card-with-shared-bg card-3"
+            hx-get="/service/drivers" 
+            hx-target="#service-detail-container" 
+            hx-swap="outerHTML" 
+            onclick="loadService('drivers')"
+        >
+            <!-- Overlays -->
+            <div class="card-overlay"></div>
+            <div class="absolute inset-0 card-gradient-3 z-20 opacity-70"></div> 
+
+            <!-- Content: Flexbox layout to push icon down -->
+            <div class="p-6 card-content flex flex-col justify-between">
+                <!-- Top Content -->
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">Professional Drivers</h2>
+                    <p class="text-white">Our drivers are the core of our service and we can assure you that they are the example of professionals.</p>
+                </div>
+
+                <!-- Bottom Placeholder Icon (Pushed down by justify-between) -->
+                <div class="flex justify-end pt-12">
+                    <div class="placeholder-icon">
+                        <!-- SVG People & Gear Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white w-24 h-24">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            <path d="M12 16a4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4 4 4 0 0 0-4 4z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
+    </div>
+      
+    <!-- HTMX Target Container -->
+    <div id="service-detail-container" class="mt-12">
+        <p class="text-center text-gray-500 p-8 bg-white rounded-xl shadow-md">Click a service card above to view more details!</p>
+    </div>
+
+  </div>
+
+  <script>
+      // Using SVG icons inline for the detail view as well
+      const getIconSvg = (name) => {
+          switch(name) {
+              case 'clock': return '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white w-20 h-20"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
+              case 'shield-check': return '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white w-20 h-20"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>';
+              case 'users': return '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white w-20 h-20"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path><path d="M12 16a4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4 4 4 0 0 0-4 4z"></path></svg>';
+              default: return '';
+          }
+      }
+      
+      function loadService(serviceType) {
+          const target = document.getElementById('service-detail-container');
+          const detailData = {
+              'on-time': {
+                  iconName: 'clock',
+                  title: 'Punctuality is Our Promise',
+                  color: 'yellow',
+                  description: "Every journey begins and ends on schedule. We use real-time GPS tracking and advanced logistics to strictly adhere to our timetables, minimizing delays and providing you with the reliable service you depend on. Your time is valuable, and we treat it that way."
+              },
+              'safe': {
+                  iconName: 'shield-check',
+                  title: 'Safety, Comfort, and State-of-the-Art Buses',
+                  color: 'green',
+                  description: "From rigorously maintained vehicles to comprehensive driver training, safety is paramount. Our modern fleet features air-conditioning, comfortable seating, and the latest safety technology to ensure your transit is both secure and restful."
+              },
+              'drivers': {
+                  iconName: 'users',
+                  title: 'The Example of Professionalism',
+                  color: 'blue',
+                  description: "Our drivers are carefully selected, highly trained, and committed to exceptional service. They represent the high standards of our company, providing professional, courteous, and knowledgeable assistance throughout your trip. They are more than just drivers; they are your trusted hosts."
+              }
+          };
+
+          const data = detailData[serviceType];
+          const iconSvg = getIconSvg(data.iconName);
+
+          // HTML that a real server would return:
+          const htmlContent = `
+              <div id="service-detail-container" class="bg-white p-8 rounded-xl shadow-2xl border-l-8 border-${data.color}-500 transition-all duration-500">
+                  <div class="flex items-start space-x-6">
+                      <!-- Use a colored version of the SVG for the detail view -->
+                      <div class="flex-shrink-0 w-20 h-20 text-${data.color}-600">${iconSvg.replace('class="text-white', `class="text-${data.color}-600`)}</div>
+                      <div>
+                          <h3 class="text-3xl font-bold text-gray-900 mb-2">${data.title}</h3>
+                          <p class="text-lg text-gray-700 leading-relaxed">${data.description}</p>
+                      </div>
+                  </div>
+              </div>
+          `;
+          
+          // Simulate the HTMX swap
+          target.outerHTML = htmlContent;
+          
+          // Scroll to the new detail content
+          document.getElementById('service-detail-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+  </script>
 
     <!-- AVAILABLE ROUTES -->
     <section class="bg-fastCyan text-center py-16">
