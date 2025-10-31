@@ -60,7 +60,8 @@
     hx-swap="outerHTML"
     >
     </div>
-
+    
+    <main id="main-content">
     <!-- HERO SECTION -->
     <section
       class="relative text-white h-screen w-full bg-cover bg-center"
@@ -328,7 +329,7 @@
         </div>
       </div>
     </section>
-
+    </main>
     <!-- FOOTER -->
     <footer class="site-footer">
       <div class="footer-left">
@@ -362,5 +363,13 @@
       </div>
     
     </footer>
+
+<script>
+  function toggleModal() {
+      const modal = document.getElementById('auth-modal');
+      if (modal) modal.classList.toggle('modal-open');
+  }
+</script>
+
   </body>
 </html>

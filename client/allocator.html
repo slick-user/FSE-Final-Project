@@ -165,7 +165,7 @@
     </div>
 
     <!-- MAIN CONTENT AREA: Bus Allocator -->
-    <main class="container mx-auto px-4 py-12 md:py-16">
+    <main class="container mx-auto px-4 py-12 md:py-16" id="main-content">
         
         <h2 class="text-4xl font-extrabold text-gray-800 mb-10 border-b pb-2">Enter Schedule</h2>
 
@@ -296,5 +296,14 @@
       </div>
     
     </footer>
+
+  
+    <script>
+      function toggleModal() {
+        const modal = document.getElementById('auth-modal');
+        if (modal) modal.classList.toggle('modal-open');
+      }
+    </script>
+
   </body>
 

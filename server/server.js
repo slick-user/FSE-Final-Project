@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const path = require("path");
 
 const routes = require("./routes/routes.js");
 const { connectDB } = require("./config/db.js");
@@ -12,6 +13,9 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, "../client")));
+app.use('/static', express.static(path.join(__dirname, '../client', 'static')));
 
 // connect to MongoDB
 connectDB();
