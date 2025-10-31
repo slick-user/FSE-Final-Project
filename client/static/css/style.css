@@ -1,5 +1,5 @@
 .clip-diagonal {
-  clip-path: polygon(0 0, 65% 0, 10% 100%, 0% 100%);
+  clip-path: polygon(0% 0%, 90% 0%, 10% 90%, 0% 100%)
 }
 
 /* Custom styles for the top dark gradient */
@@ -20,13 +20,45 @@
   pointer-events: none; 
 }
 
+.our-services-bar {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 100px;
+  margin-bottom: 40px;
+}
+
+/* The yellow slanted shape */
+.yellow-diagonal {
+  background-color: #FFF714; /* bright yellow */
+  clip-path: polygon(0 0, 90% 0,75% 100%, 0% 100%);
+  width: 20%; /* width of the angled piece */
+  height: 80%;
+  display: flex;
+  align-items: center;
+  text-align: left center;
+}
+
+.our-services-title {
+  color: #000; /* contrast on yellow */
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: "Inter";
+  margin: 10;
+  padding-left: 10px; /* tiny nudge for optical balance */
+  padding-bottom: -40px;
+}
+
 /* Styles for the shared background image effect */
 .card-with-shared-bg {
   background-image: url('../images/bus1.jpg'); 
   background-size: 300% 100%; 
   background-repeat: no-repeat;
   overflow: hidden;
-  object-fit: cover;
+  margin: 0 5px; 
+  display: inline-block;
   height: 550px;
   width: 300px;
 }
@@ -68,4 +100,51 @@
   z-index: 3; 
   color: white; 
   height: 100%; /* Important: Takes full height of the parent card */
+}
+
+ .site-footer {
+  background-color: #000;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 50px;
+  border-top: 2px solid #fbbf24;
+}
+
+/* Link styling */
+.footer-link {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px; /* spacing between icon and text */
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #fbbf24;
+  transform: translateY(-2px);
+}
+
+/* Larger GitHub icon */
+.github-logo {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+/* Align fastuubts.org text neatly */
+.footer-right a {
+  font-weight: 500;
+  font-size: 1.2rem;
+} 
+
+/* Modal styles for visibility (hidden by default) */
+.modal {
+  display: none; /* Hide modal by default */
+}
+.modal-open {
+  display: flex;
 }

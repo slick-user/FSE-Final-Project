@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAST - UTBS</title>
+    
+    <link rel="stylesheet" href="static/css/style.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.9"></script>
+    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              fastBlue: "#0055A4",
+              fastGold: "#FFF714",
+              fastCyan: "#00E0E0",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      /* Styling for the map placeholder to match the image structure */
+      .map-placeholder {
+        min-height: 400px;
+        background-color: #e5e7eb; 
+        border: 1px solid #d1d5db;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-weight: 500;
+        color: #4b5563;
+      }
+        /* Style for the 'Bus Found' result banner with background image and gradient */
+      .bus-found-banner {
+          position: relative; /* Needed for absolute positioning of overlay */
+          color: white;
+          text-align: center;
+          padding: 4rem 1.5rem;
+          border-radius: 0.75rem;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.08); /* Darker shadow for contrast */
+          transition: opacity 0.3s ease-in-out;
+          
+          background-image: url('static/images/Hero\ Image.png'); /* Placeholder bus image */
+          background-size: cover;
+          background-position: center;
+          display: flex; /* Use flex to easily center content vertically */
+          flex-direction: column;
+          justify-content: center; /* Center content vertically */
+          align-items: center; /* Center content horizontally */
+          min-height: 400px; /* Give it some height */
+      }
+
+      /* Gradient overlay for the bus found banner */
+      .bus-found-banner::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7)); /* Darker gradient for text readability */
+          z-index: 1; /* Puts gradient above image but below text */
+      }
+
+      /* Ensures text and buttons are above the gradient overlay */
+      .bus-found-banner > * {
+          position: relative;
+          z-index: 2;
+      }   
+
+      .btn {
+      position: relative;
+      font-size: 17px;
+      text-decoration: none;
+      padding: 1em 2.5em;
+      display: inline-block;
+      cursor: pointer;
+      border-radius: 6em;
+      transition: all 0.2s;
+      border: none;
+      font-family: "Inter";
+      font-weight: 500;
+      color: black;
+      background-color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn::after {
+      content: "";
+      display: inline-block;
+      height: 100%;
+      width: 100%;
+      border-radius: 100px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      transition: all 0.4s;
+    }
+
+    .btn:hover::after {
+      transform: scaleX(1.4) scaleY(1.6);
+      opacity: 0;
+    } 
+</style>
+      
+  </head>
+
+  <body class="font-sans text-gray-800">
+   
+    <!-- NAVBAR -->
+    <header
+      class="flex justify-between items-center px-8 py-4 bg-black text-white"
+    >
+      <div class="flex items-center space-x-3">
+        <img
+          src="static/images/logo.png"
+          alt="FAST Transport Logo"
+          class="w-10 h-10 rounded-full"
+        />
+        <h1 class="text-2xl font-bold">FAST - UTBS</h1>
+      </div>
+      <nav class="space-x-6">
+        <a href="index.html" class="hover:text-fastGold">Home</a>
+        <a href="allocator.html" class="hover:text-fastGold">Bus Allocator</a>
+        <a href="team.html" class="hover:text-fastGold">Meet The Team</a>
+        <button 
+          class="bg-white text-black px-3 py-1 rounded hover:bg-fastGold transition"
+          onclick="toggleModal()"
+        >
+          Login
+        </button>
+      </nav>
+    </header>
+
+    <div 
+    hx-get="login.html" 
+    hx-trigger="load" 
+    hx-swap="outerHTML"
+    >
+    </div>
+
+    <div 
+    hx-get="login.html" 
+    hx-trigger="load" 
+    hx-swap="outerHTML"
+    >
+    </div>
+
+    <!-- MAIN CONTENT AREA: Bus Allocator -->
+    <main class="container mx-auto px-4 py-12 md:py-16">
+        
+        <h2 class="text-4xl font-extrabold text-gray-800 mb-10 border-b pb-2">Enter Schedule</h2>
+
+        <!-- This grid establishes the side-by-side layout (Form on left, Map on right) on large screens -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column (1/3 width): Schedule Input Form -->
+            <div class="lg:col-span-1 bg-white p-8 shadow-2xl rounded-xl">
+                <h3 class="text-xl font-semibold text-fastBlue mb-4">Find Bus</h3>
+
+                <!-- HTMX FORM: Submits the search parameters -->
+                <form hx-post="/find-bus"
+                      hx-target="#bus-result-container"
+                      hx-swap="outerHTML"
+                      hx-indicator="#loading-spinner">
+                    
+                    <!-- Stop Dropdown -->
+                    <div class="mb-6">
+                        <label for="stop" class="block text-sm font-medium text-gray-700 mb-1">Stop</label>
+                        <select id="stop" name="stop" required
+                                class="w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-fastBlue focus:border-fastBlue transition-colors appearance-none">
+                            <option value="G-9" selected>G-9 Kashmir Highway</option>
+                            <option value="6th-Road">6th Road, Muree Road</option>
+                            <option value="Khanna-Pull">Khanna Pull Stop, Expressway</option>
+                            <option value="Askari-14">Askari 14, Main Gate</option>
+                        </select>
+                    </div>
+
+                    <!-- Time of Departure -->
+                    <div class="mb-6">
+                        <label for="time" class="block text-sm font-medium text-gray-700 mb-1">Time of Departure</label>
+                        <input type="time" id="time" name="time" value="14:45" required
+                               class="w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-fastBlue focus:border-fastBlue transition-colors">
+                        <p class="text-xs text-gray-500 mt-1">When will you be departing?</p>
+                    </div>
+
+                    <!-- Loading Spinner (Hidden by default, shown while HTMX request is active) -->
+                    <div id="loading-spinner" class="htmx-indicator text-center my-4">
+                        <svg class="animate-spin h-5 w-5 text-fastBlue mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="text-sm text-fastBlue mt-1">Searching...</p>
+                    </div>
+
+                    <!-- Confirm Button -->
+                    <button type="submit"
+                            class="w-full bg-black text-white py-3 rounded-xl font-bold transition shadow-lg">
+                        Confirm Details
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Column (2/3 width): Map Placeholder -->
+            <div class="lg:col-span-2 bg-white shadow-2xl rounded-xl overflow-hidden border-2 border-gray-200">
+                <div class="map-placeholder h-full p-6">
+                    <div class="max-w-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                        <p class="text-lg font-semibold">Route Visualization (Google Maps Placeholder)</p>
+                        <p class="text-sm mt-1 text-gray-600">
+                            This area will be dynamically replaced by a route map and directions once the
+                            Google Maps API is integrated into the backend.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+        <!-- Full-Width Bottom Section: Dynamic Result Banner Container -->
+        <!-- This static content is a placeholder and will be replaced by the HTMX response from the server -->
+        <div id="bus-result-container" class="mt-12 opacity-100 transition-opacity">
+            <div class="bus-found-banner">
+                <h3 class="text-3xl md:text-5xl font-extrabold text-black mb-4">Bus Found</h3>
+                <p class="text-xl md:text-2xl font-light mb-6 text-black">
+                    G-9 Kashmir Highway Departing at <span class="font-bold">3:20 PM</span>
+                </p>
+                <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
+                  <button class="btn after:bg-white">
+                      <span class="top-key"></span>
+                      <span class="text">Find Another Bus</span>
+                      <span class="bottom-key-1"></span>
+                      <span class="bottom-key-2"></span>
+                  </button>
+                  <button class="btn bg-black text-white after:bg-black">
+                    <span class="top-key"></span>
+                    <span class="text">Reserve Seat</span>
+                    <span class="bottom-key-1"></span>
+                    <span class="bottom-key-2"></span>
+                  </button> 
+                </div>
+            </div>
+        </div>
+    
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-left">
+        <a href="https://github.com/slick-user/FSE-Final-Project/tree/htmx-landing" target="_blank" class="footer-link">
+          <svg xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            fill="currentColor" 
+            class="github-logo">
+            <path d="M12 0C5.37 0 0 5.37 0 12a12.04 12.04 0 0 0 8.21 11.44c.6.11.82-.26.82-.58
+                 0-.29-.01-1.05-.02-2.06-3.34.73-4.04-1.61-4.04-1.61-.55-1.38-1.34-1.75-1.34-1.75
+                 -1.09-.75.08-.73.08-.73 1.2.09 1.83 1.23 1.83 1.23 1.07 1.83 2.81 1.3 3.5.99
+                 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95
+                 0-1.32.47-2.39 1.23-3.23-.12-.3-.53-1.51.12-3.15
+                 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.3-1.55 3.3-1.23 3.3-1.23
+                 .65 1.64.24 2.85.12 3.15.76.84 1.23 1.91 1.23 3.23
+                 0 4.62-2.8 5.65-5.48 5.95.43.37.82 1.1.82 2.22
+                 0 1.6-.01 2.9-.01 3.29 0 .32.22.7.83.58A12.04 12.04 0 0 0 24 12
+                 c0-6.63-5.37-12-12-12Z"/>
+          </svg>
+          <span>Project Repo</span>
+        </a>
+      </div>
+
+      <p>
+        © 2025 FAST University | Designed by
+        <span class="text-fastGold">EduRoute Team</span>
+      </p>
+      
+      <div class="footer-right">
+        <a href="https://fastubts.org" target="_blank" class="footer-link">fastubts.org</a>
+      </div>
+    
+    </footer>
+  </body>
+
