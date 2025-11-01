@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.9"></script>
+   
+    <script src="login.js"> </script>
     
     <script>
       tailwind.config = {
@@ -62,6 +64,7 @@
     </div>
     
     <main id="main-content">
+
     <!-- HERO SECTION -->
     <section
       class="relative text-white h-screen w-full bg-cover bg-center"
@@ -369,7 +372,10 @@
       const modal = document.getElementById('auth-modal');
       if (modal) modal.classList.toggle('modal-open');
   }
-</script>
 
+
+  document.addEventListener("DOMContentLoaded", setupAuthHandlers);
+  document.addEventListener("htmx:afterSwap", setupAuthHandlers);
+</script>
   </body>
 </html>

@@ -12,6 +12,7 @@ const app = express();
 
 // Middleware
 app.use(cors());
+//                Allows our server to read JSON data
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "../client")));

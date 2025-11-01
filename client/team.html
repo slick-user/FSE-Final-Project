@@ -10,7 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.9"></script>
-    
+   
+    <script src="login.js"> </script>
+
     <script>
       tailwind.config = {
         theme: {
@@ -69,7 +71,7 @@
             <h2 class="text-3xl font-semibold text-gray-900">Azlan Ali Khan</h2>
             <p class="text-fastBlue text-lg font-medium mb-4">UI/UX Designer | Architecture</p>
             <p class="text-gray-700 leading-relaxed max-w-lg">
-              Azlan Ali Khan, 20, a third-year student of FAST University. Is responsible for the Website's Design and the responsiveness. Overseeing all factors related to crafting a comprehensive design ensuring a smooth and accessible user experience. Is also responsible for the integration of the system architecture
+              Azlan Ali Khan, 20, a third-semester student studying Cyber Security from FAST University. Is responsible for the Website's Design and the responsiveness. Overseeing all factors related to crafting a comprehensive design ensuring a smooth and accessible user experience. Is also responsible for the integration of the system architecture
             </p>
           </div>
           <div class="lg:w-1/2 order-1 lg:order-2 w-full flex justify-center lg:justify-end">
@@ -172,6 +174,9 @@
       const modal = document.getElementById('auth-modal');
       if (modal) modal.classList.toggle('modal-open');
     }
+ 
+    document.addEventListener("DOMContentLoaded", setupAuthHandlers);
+    document.addEventListener("htmx:afterSwap", setupAuthHandlers);
   </script>
 
   </body>

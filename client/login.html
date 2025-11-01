@@ -32,6 +32,9 @@
   
   <div id="auth-content-container" class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-xl relative">
       
+    <button hx-get="/api" hx-trigger="click" hx-target="#output">Click me</button>
+    <div id="output"></div>
+
       <button 
           class="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
           onclick="toggleModal()"
