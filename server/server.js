@@ -6,7 +6,7 @@ const path = require("path");
 const routes = require("./routes/routes.js");
 const { connectDB } = require("./config/db.js");
 
-dotenv.config({ override:true, path:'../.env'});
+dotenv.config({ override:true, path:'.env'});
 
 const app = express();
 
