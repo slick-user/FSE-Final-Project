@@ -7,12 +7,12 @@ const userSchema = new mongoose.Schema({
     trim: true
   },
 
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true
-  },
+  //email: {
+    //type: String,
+    //required: true,  not required for the time being
+    //unique: true,
+    //lowercase: true
+  //},
 
   password: {
     type: String,
@@ -25,9 +25,9 @@ const userSchema = new mongoose.Schema({
     unique: true
   },
 
-  Photo: {
-    type: String
-  },
+  //Photo: {
+    //type: String
+  //},
 
   role: {
     type: String,
@@ -43,8 +43,12 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
 
+  resetCode: {
+    type: String,
+  }
+  
 });
 
 const User = mongoose.model('User', userSchema);

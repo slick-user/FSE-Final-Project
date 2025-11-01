@@ -32,9 +32,6 @@
   
   <div id="auth-content-container" class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-xl relative">
       
-    <button hx-get="/api" hx-trigger="click" hx-target="#output">Click me</button>
-    <div id="output"></div>
-
       <button 
           class="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
           onclick="toggleModal()"
@@ -56,7 +53,7 @@
                     <input 
                       type="text" 
                       id="modal-login-student-id" 
-                      value="2AI-2110" 
+                      value="" 
                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"
                     />
                   </div>
@@ -66,7 +63,7 @@
                     <input 
                       type="password" 
                       id="modal-login-password" 
-                      value="********" 
+                      value="" 
                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"
                     />
                   </div>
@@ -79,7 +76,7 @@
                   </button>
                   
                   <div class="text-center">
-                    <a href="#" class="text-sm text-fastBlue hover:text-fastGold">Forgot Password?</a>
+                    <a href="#" id="forgot-password-link" class="text-sm text-fastBlue hover:text-fastGold">Forgot Password?</a>
                   </div>
                 </form>
               </div>
@@ -88,43 +85,59 @@
           <hr class="lg:hidden my-4 border-gray-200">
 
           <section>
-              <h2 class="text-3xl font-bold mb-6 text-gray-900 text-center">Sign Up</h2>
-              
-              <div class="form-card border border-gray-300">
-                <form class="space-y-4">
-                  <div>
-                    <label for="modal-signup-name" class="block text-sm font-medium text-gray-700">Name</label>
-                    <input type="text" id="modal-signup-name" value="Azlan Ali Khan" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"/>
-                  </div>
+  <h2 class="text-3xl font-bold mb-6 text-gray-900 text-center">Sign Up</h2>
 
-                  <div>
-                    <label for="modal-signup-student-id" class="block text-sm font-medium text-gray-700">Student ID</label>
-                    <input type="text" id="modal-signup-student-id" value="2AI-2110" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"/>
-                  </div>
-                  
-                  <div>
-                    <label for="modal-signup-email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="modal-signup-email" value="i242110@isb.nu.edu.pk" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"/>
-                  </div>
+  <div class="form-card border border-gray-300">
+    <form class="space-y-4">
+      <div>
+        <label for="modal-signup-name" class="block text-sm font-medium text-gray-700">Name</label>
+        <input 
+          type="text" 
+          id="modal-signup-name" 
+          placeholder="Enter your name"
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"
+        />
+      </div>
 
-                  <div class="flex items-center justify-between">
-                    <label class="block text-sm font-medium text-gray-700">Upload Photo of Student ID Card</label>
-                    <div class="w-8 h-8 rounded-full bg-gray-200 border border-gray-400 flex items-center justify-center cursor-pointer">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-gray-600">
-                          <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.029 18.029 0 0 1 12 21.75c-2.459 0-4.917-.404-7.147-1.24.162-.07.319-.155.437-.695Z" clip-rule="evenodd" />
-                      </svg>
-                    </div>
-                  </div>
+      <div>
+        <label for="modal-signup-student-id" class="block text-sm font-medium text-gray-700">Student ID</label>
+        <input 
+          type="text" 
+          id="modal-signup-student-id" 
+          placeholder="Enter your roll number"
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"
+        />
+      </div>
 
-                  <button 
-                    type="submit" 
-                    class="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
-                  >
-                    Sign Up
-                  </button>
-                </form>
-              </div>
-          </section>
+      <div>
+        <label for="modal-signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input 
+          type="password" 
+          id="modal-signup-password" 
+          placeholder="Enter your password"
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"
+        />
+      </div>
+
+      <div class="flex items-center justify-between">
+        <label class="block text-sm font-medium text-gray-700">Upload Photo of Student ID Card</label>
+        <div class="w-8 h-8 rounded-full bg-gray-200 border border-gray-400 flex items-center justify-center cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-gray-600">
+              <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.029 18.029 0 0 1 12 21.75c-2.459 0-4.917-.404-7.147-1.24.162-.07.319-.155.437-.695Z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        class="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
+      >
+        Sign Up
+      </button>
+    </form>
+  </div>
+</section>
+
       </div>
       </div>
 </div>

@@ -48,11 +48,10 @@
         <a href="allocator.html" class="hover:text-fastGold">Bus Allocator</a>
         <a href="team.html" class="hover:text-fastGold">Meet The Team</a>
         <button 
+          id="auth-button"
           class="bg-white text-black px-3 py-1 rounded hover:bg-fastGold transition"
-          onclick="toggleModal()"
-        >
-          Login
-        </button>
+          onclick="handleAuthClick()"
+        > Login </button>
       </nav>
     </header>
 
@@ -373,9 +372,16 @@
       if (modal) modal.classList.toggle('modal-open');
   }
 
+  document.addEventListener("DOMContentLoaded", () => {
+    setupAuthHandlers(); // Existing call for form binding
+    updateAuthButton();  // NEW: Check auth status and update button
+  });
+      
+  document.addEventListener("htmx:afterSwap", () => {
+    setupAuthHandlers(); // Existing call for form binding
+    updateAuthButton();  // NEW: Check auth status and update button
+  });
 
-  document.addEventListener("DOMContentLoaded", setupAuthHandlers);
-  document.addEventListener("htmx:afterSwap", setupAuthHandlers);
-</script>
+  </script>
   </body>
 </html>
