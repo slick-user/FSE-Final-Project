@@ -6,10 +6,15 @@
     <title>FAST - UTBS</title>
     
     <link rel="stylesheet" href="static/css/style.css">
-    
+
+    <!-- Font, Tailwind and HTMX inclusion -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.9"></script>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script src="login.js"> </script>
     
@@ -79,58 +84,58 @@
       }   
 
       .btn {
-      position: relative;
-      font-size: 17px;
-      text-decoration: none;
-      padding: 1em 2.5em;
-      display: inline-block;
-      cursor: pointer;
-      border-radius: 6em;
-      transition: all 0.2s;
-      border: none;
-      font-family: "Inter";
-      font-weight: 500;
-      color: black;
-      background-color: white;
-    }
+        position: relative;
+        font-size: 17px;
+        text-decoration: none;
+        padding: 1em 2.5em;
+        display: inline-block;
+        cursor: pointer;
+        border-radius: 6em;
+        transition: all 0.2s;
+        border: none;
+        font-family: "Inter";
+        font-weight: 500;
+        color: black;
+        background-color: white;
+      }
 
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
+      .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
 
-    .btn:active {
-      transform: translateY(-1px);
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    }
+      .btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+      }
 
-    .btn::after {
-      content: "";
-      display: inline-block;
-      height: 100%;
-      width: 100%;
-      border-radius: 100px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1;
-      transition: all 0.4s;
-    }
+      .btn::after {
+        content: "";
+        display: inline-block;
+        height: 100%;
+        width: 100%;
+        border-radius: 100px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        transition: all 0.4s;
+      }
+      
+      .btn:hover::after {
+        transform: scaleX(1.4) scaleY(1.6);
+        opacity: 0;
+      } 
 
-    .btn:hover::after {
-      transform: scaleX(1.4) scaleY(1.6);
-      opacity: 0;
-    } 
-</style>
+    </style>
       
   </head>
 
   <body class="font-sans text-gray-800">
    
     <!-- NAVBAR -->
-    <header
-      class="flex justify-between items-center px-8 py-4 bg-black text-white"
-    >
+    <header class="flex justify-between items-center px-8 py-4 bg-black text-white">
+      
       <div class="flex items-center space-x-3">
         <img
           src="static/images/logo.png"
@@ -139,6 +144,7 @@
         />
         <h1 class="text-2xl font-bold">FAST - UTBS</h1>
       </div>
+
       <nav class="space-x-6">
         <a href="index.html" class="hover:text-fastGold">Home</a>
         <a href="allocator.html" class="hover:text-fastGold">Bus Allocator</a>
@@ -150,21 +156,14 @@
         > Login </button> 
 
       </nav>
+    
     </header>
 
-    <div 
-    hx-get="login.html" 
-    hx-trigger="load" 
-    hx-swap="outerHTML"
-    >
+    <div hx-get="login.html" 
+         hx-trigger="load" 
+         hx-swap="outerHTML">
     </div>
 
-    <div 
-    hx-get="login.html" 
-    hx-trigger="load" 
-    hx-swap="outerHTML"
-    >
-    </div>
 
     <!-- MAIN CONTENT AREA: Bus Allocator -->
     <main class="container mx-auto px-4 py-12 md:py-16" id="main-content">
@@ -178,69 +177,46 @@
             <div class="lg:col-span-1 bg-white p-8 shadow-2xl rounded-xl">
                 <h3 class="text-xl font-semibold text-fastBlue mb-4">Find Bus</h3>
 
-                <!-- HTMX FORM: Submits the search parameters -->
-                <form hx-post="/find-bus"
-                      hx-target="#bus-result-container"
-                      hx-swap="outerHTML"
-                      hx-indicator="#loading-spinner">
-                    
-                    <!-- Stop Dropdown -->
-                    <div class="mb-6">
-                        <label for="stop" class="block text-sm font-medium text-gray-700 mb-1">Stop</label>
-                        <select id="stop" name="stop" required
-                                class="w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-fastBlue focus:border-fastBlue transition-colors appearance-none">
-                            <option value="G-9" selected>G-9 Kashmir Highway</option>
-                            <option value="6th-Road">6th Road, Muree Road</option>
-                            <option value="Khanna-Pull">Khanna Pull Stop, Expressway</option>
-                            <option value="Askari-14">Askari 14, Main Gate</option>
-                        </select>
-                    </div>
-
-                    <!-- Time of Departure -->
-                    <div class="mb-6">
-                        <label for="time" class="block text-sm font-medium text-gray-700 mb-1">Time of Departure</label>
-                        <input type="time" id="time" name="time" value="14:45" required
-                               class="w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-fastBlue focus:border-fastBlue transition-colors">
-                        <p class="text-xs text-gray-500 mt-1">When will you be departing?</p>
-                    </div>
-
-                    <!-- Loading Spinner (Hidden by default, shown while HTMX request is active) -->
-                    <div id="loading-spinner" class="htmx-indicator text-center my-4">
-                        <svg class="animate-spin h-5 w-5 text-fastBlue mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <p class="text-sm text-fastBlue mt-1">Searching...</p>
-                    </div>
-
-                    <!-- Confirm Button -->
-                    <button type="submit"
-                            class="w-full bg-black text-white py-3 rounded-xl font-bold transition shadow-lg">
-                        Confirm Details
-                    </button>
+                <form onsubmit="handleFindBus(event)">
+                  <!-- Stop Dropdown -->
+                  <div class="mb-6">
+                    <label for="stop-select" class="block text-sm font-medium text-gray-700 mb-1">Stop</label>
+                    <select id="stop-select" name="stopId" required
+                            class="w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-fastBlue
+                                   focus:border-fastBlue transition-colors appearance-none">
+                      <!-- populated via populateStops() -->
+                    </select>
+                  </div>
+                
+                  <!-- Time of Departure -->
+                  <div class="mb-6">
+                    <label for="time" class="block text-sm font-medium text-gray-700 mb-1">Time of Departure</label>
+                    <input type="time" id="time" name="time" value="14:45" required
+                           class="w-full p-3 border-2 border-gray-300 rounded-lg 
+                                  focus:ring-fastBlue focus:border-fastBlue transition-colors">
+                    <p class="text-xs text-gray-500 mt-1">When will you be departing?</p>
+                  </div>
+                
+                  <!-- Confirm Button -->
+                  <button type="submit"
+                          class="w-full bg-black text-white py-3 rounded-xl 
+                                 font-bold transition shadow-lg">
+                    Confirm Details
+                  </button>
                 </form>
             </div>
 
-            <!-- Right Column (2/3 width): Map Placeholder -->
+            <!-- Map Grid/Div -->
             <div class="lg:col-span-2 bg-white shadow-2xl rounded-xl overflow-hidden border-2 border-gray-200">
-                <div class="map-placeholder h-full p-6">
+                <div id="route-map" class="map-placeholder h-full p-6">
                     <div class="max-w-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                        </svg>
-                        <p class="text-lg font-semibold">Route Visualization (Google Maps Placeholder)</p>
-                        <p class="text-sm mt-1 text-gray-600">
-                            This area will be dynamically replaced by a route map and directions once the
-                            Google Maps API is integrated into the backend.
-                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-
-        <!-- Full-Width Bottom Section: Dynamic Result Banner Container -->
+        <!-- BOTTOM CONTAINER: BUS FOUND -->
         <!-- This static content is a placeholder and will be replaced by the HTMX response from the server -->
         <div id="bus-result-container" class="mt-12 opacity-100 transition-opacity">
             <div class="bus-found-banner">
@@ -284,6 +260,7 @@
                  0 1.6-.01 2.9-.01 3.29 0 .32.22.7.83.58A12.04 12.04 0 0 0 24 12
                  c0-6.63-5.37-12-12-12Z"/>
           </svg>
+
           <span>Project Repo</span>
         </a>
       </div>
@@ -305,11 +282,6 @@
         const modal = document.getElementById('auth-modal');
         if (modal) modal.classList.toggle('modal-open');
       }
-     
-      document.addEventListener("DOMContentLoaded", () => {
-        setupAuthHandlers(); // Existing call for form binding
-        updateAuthButton();  // NEW: Check auth status and update button
-      });
       
       document.addEventListener("htmx:afterSwap", () => {
         setupAuthHandlers(); // Existing call for form binding
@@ -323,6 +295,60 @@
           window.location.href = "/index.html";
         }
       })();
+
+      async function populateStops() {
+        const res = await fetch('/api/stops');
+        const stops = await res.json();
+        const select = document.getElementById('stop-select');
+        select.innerHTML = '';
+        stops.forEach(stop => {
+          const option = document.createElement('option');
+          option.value = stop._id;
+          option.textContent = `${stop.zone || 'Zone ?'} – ${stop.name}`;
+          select.appendChild(option);
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        setupAuthHandlers(); // Existing call for form binding
+        updateAuthButton();  // NEW: Check auth status and update button
+        populateStops();  // Add all the possible stops
+      });
+
+      // Map Initialization (Starts at FAST University)
+      const FAST_COORDS = [33.6426, 73.0394];
+      const map = L.map('route-map').setView(FAST_COORDS, 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+      let routeLayer = null;
+
+      async function showRoute(stopId) {
+        const res = await fetch(`/api/route?stopId=${stopId}`);
+        if (!res.ok) {
+          alert('Route lookup failed');
+          return;
+        }
+        const data = await res.json();
+        if (routeLayer) map.removeLayer(routeLayer);
+        routeLayer = L.geoJSON(data.route).addTo(map);
+        map.fitBounds(routeLayer.getBounds());
+        document.getElementById('bus-result-container').innerHTML =
+          `<div class="bus-found-banner">
+            <h3 class="text-3xl font-extrabold text-black mb-4">${data.stop.name}</h3>
+            <p class="text-xl font-light text-black">
+              Distance ${(data.distance_m/1000).toFixed(1)} km · ${(data.duration_s/60).toFixed(0)} min
+            </p>
+          </div>`;
+        }
+
+        async function handleFindBus(event) {
+          event.preventDefault();
+          const stopId = document.getElementById('stop-select').value;
+          if (!stopId) return alert('Select a stop first');
+          await showRoute(stopId);
+        }
 
     </script>
 

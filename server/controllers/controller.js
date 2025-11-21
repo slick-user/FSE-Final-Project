@@ -48,7 +48,8 @@ const loginUser = async (req, res) => {
     
     // Creating JWT Token
     const token = jwt.sign({ id: user._id, role: user.role }, "SECRET_KEY", { expiresIn: "1h" });
-  
+ 
+    // Response should be in this format
     res.json({
       success: true,
       message: "Login successful",
@@ -110,4 +111,4 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-module.exports = { getRoot, registerUser, getAllUsers, loginUser, forgotPassword, resetPassword }; 
+module.exports = { getRoot, registerUser, getAllUsers, loginUser, forgotPassword, resetPassword}; 

@@ -366,22 +366,22 @@
     
     </footer>
 
-<script>
-  function toggleModal() {
-      const modal = document.getElementById('auth-modal');
-      if (modal) modal.classList.toggle('modal-open');
-  }
+    <script>
+      function toggleModal() {
+        const modal = document.getElementById('auth-modal');
+        if (modal) modal.classList.toggle('modal-open');
+      }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    setupAuthHandlers(); // Existing call for form binding
-    updateAuthButton();  // NEW: Check auth status and update button
-  });
+      document.addEventListener("DOMContentLoaded", () => {
+        setupAuthHandlers(); // Existing call for form binding
+        updateAuthButton();  // Check auth status and update button
+      });
       
-  document.addEventListener("htmx:afterSwap", () => {
-    setupAuthHandlers(); // Existing call for form binding
-    updateAuthButton();  // NEW: Check auth status and update button
-  });
+      document.addEventListener("htmx:afterSwap", () => {
+        setupAuthHandlers(); // Existing call for form binding
+        updateAuthButton();  // Check auth status and update button
+      });
 
-  </script>
+    </script>
   </body>
 </html>
