@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
 
   role: {
     type: String,
-    enum: ['student', 'admin'], // Do we want to save Driver as a role for here?
+    enum: ['student', 'admin'],
     default: 'student'
   },
 

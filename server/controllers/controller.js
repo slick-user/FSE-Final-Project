@@ -112,4 +112,11 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-module.exports = { getRoot, registerUser, getAllUsers, loginUser, forgotPassword, resetPassword}; 
+const authAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin')
+    return res.status(403).json({ error: 'Access denied. Admins only.' });
+
+  next();
+};
+
+module.exports = { getRoot, registerUser, getAllUsers, loginUser, forgotPassword, resetPassword, authAdmin}; 

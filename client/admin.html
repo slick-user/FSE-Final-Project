@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAST UTBS – Admin Panel</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.9"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            fastBlue: "#0055A4",
+            fastGold: "#FFF714",
+            fastCyan: "#00E0E0"
+          }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  
+  <!-- TOP NAVBAR -->
+  <header class="bg-black text-white flex justify-between items-center px-8 py-4 shadow-xl">
+    <div class="flex items-center space-x-3">
+      <img src="static/images/logo.png" class="w-10 h-10 rounded-full" />
+      <h1 class="text-xl font-bold">Admin Panel</h1>
+    </div>
+    <button 
+      onclick="logoutAdmin()" 
+      class="bg-fastGold text-black px-4 py-1 rounded hover:bg-yellow-400 transition"
+    >
+      Logout
+    </button>
+  </header>
+
+  <!-- LAYOUT GRID -->
+  <div class="grid grid-cols-12">
+    
+    <!-- SIDEBAR -->
+    <aside class="col-span-2 bg-gray-900 text-white h-screen p-6 space-y-6">
+      <h2 class="text-lg font-semibold tracking-wide">Menu</h2>
+      
+      <nav class="space-y-3">
+        <button hx-get="/admin/routes" hx-target="#admin-content" 
+                class="w-full text-left py-2 px-3 rounded hover:bg-gray-700 transition nav-button" 
+                data-panel="routes-panel">
+          Manage Routes
+        </button>
+      
+        <button hx-get="/admin/stops" hx-target="#admin-content" 
+                class="w-full text-left py-2 px-3 rounded hover:bg-gray-700 transition nav-button" 
+                data-panel="stops-panel">
+          Manage Stops
+        </button>
+      
+        <button hx-get="/admin/drivers" hx-target="#admin-content" 
+                class="w-full text-left py-2 px-3 rounded hover:bg-gray-700 transition nav-button"
+                data-panel="drivers-panel">
+          Drivers
+        </button>
+      
+        <button hx-get="/admin/schedules" hx-target="#admin-content" 
+                class="w-full text-left py-2 px-3 rounded hover:bg-gray-700 transition nav-button"
+                data-panel="schedules-panel">
+          Schedules
+        </button>
+      </nav>
+
+    </aside>
+    
+    <main id="admin-content" class="col-span-10 p-10">
+
+      <div id="welcome-panel" class="admin-panel">
+        <div class="text-center py-12">
+          <h1 class="text-4xl font-bold text-fastBlue">Welcome, Admin</h1>
+          <p class="text-gray-600 mt-4 text-lg">
+            Select a category from the sidebar to begin managing the system.
+          </p>
+        </div>
+      </div>
+      
+      <div id="stops-panel" class="admin-panel hidden">
+        <h2 class="text-3xl font-bold mb-6">🚌 Manage Stops</h2>
+        
+        <div class="bg-white p-6 rounded shadow mb-8">
+            <h3 class="text-xl font-semibold mb-4">Add New Stop</h3>
+            <form id="add-stop-form" class="grid grid-cols-4 gap-4 items-end">
+                <div class="col-span-2">
+                    <label for="stop-name" class="block text-sm font-medium text-gray-700">Stop Name</label>
+                    <input type="text" id="stop-name" name="name" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label for="stop-zone" class="block text-sm font-medium text-gray-700">Zone</label>
+                    <select id="stop-zone" name="zone" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        <option value="Islamabad">Islamabad</option>
+                        <option value="Rawalpindi">Rawalpindi</option>
+                    </select>
+                </div>
+                <button type="submit" class="bg-fastBlue text-white h-full py-2 rounded hover:bg-blue-700 transition">
+                    Add Stop
+                </button>
+            </form>
+            <p id="stop-form-message" class="mt-3 text-sm hidden"></p>
+        </div>
+
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <h3 class="text-xl font-semibold p-4 bg-gray-100">Current Stops Database</h3>
+            <table class="min-w-full text-left">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="px-4 py-2">Zone</th>
+                        <th class="px-4 py-2">Stop Name</th>
+                        <th class="px-4 py-2">ID</th>
+                        <th class="px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="stops-data-table-body">
+                    <tr><td colspan="4" class="p-4 text-center text-gray-500">Loading stops...</td></tr>
+                </tbody>
+            </table>
+        </div>
+      </div>
+      
+      <div id="routes-panel" class="admin-panel hidden">
+        <h2 class="text-3xl font-bold mb-6">🛣️ Manage Routes</h2>
+        <p class="text-gray-600">This section is under construction.</p>
+      </div>
+      <div id="drivers-panel" class="admin-panel hidden">
+        <h2 class="text-3xl font-bold mb-6">🚌 Manage Buses/Drivers</h2>
+        
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <h3 class="text-xl font-semibold p-4 bg-gray-100">Current Bus Fleet</h3>
+            <table class="min-w-full text-left">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="px-4 py-2">Number Plate</th>
+                        <th class="px-4 py-2">Model</th>
+                        <th class="px-4 py-2">Capacity</th>
+                        <th class="px-4 py-2">Driver Name</th>
+                    </tr>
+                </thead>
+                <tbody id="buses-data-table-body">
+                    <tr><td colspan="4" class="p-4 text-center text-gray-500">Loading buses...</td></tr>
+                </tbody>
+            </table>
+        </div>
+      </div>
+
+      <div id="schedules-panel" class="admin-panel hidden">
+        <h2 class="text-3xl font-bold mb-6">🗓️ Manage Schedules</h2>
+
+        <div class="bg-white p-6 rounded shadow mb-8">
+            <h3 class="text-xl font-semibold mb-4">Assign New Bus Schedule</h3>
+            <form id="add-schedule-form" class="grid grid-cols-5 gap-4 items-end">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Bus</label>
+                    <select id="schedule-bus" name="busId" required class="mt-1 block w-full p-2 border rounded-md">
+                        <option value="">Select Bus</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Stop</label>
+                    <select id="schedule-stop" name="stopId" required class="mt-1 block w-full p-2 border rounded-md">
+                        <option value="">Select Stop</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" name="date" required class="mt-1 block w-full p-2 border rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Time</label>
+                    <input type="time" name="departureTime" required class="mt-1 block w-full p-2 border rounded-md">
+                </div>
+                <button type="submit" class="bg-fastBlue text-white h-full py-2 rounded hover:bg-blue-700 transition">
+                    Assign Schedule
+                </button>
+            </form>
+            <p id="schedule-form-message" class="mt-3 text-sm hidden"></p>
+        </div>
+
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <h3 class="text-xl font-semibold p-4 bg-gray-100">Upcoming Schedules</h3>
+            <table class="min-w-full text-left">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="px-4 py-2">Date</th>
+                        <th class="px-4 py-2">Time</th>
+                        <th class="px-4 py-2">Bus/Plate</th>
+                        <th class="px-4 py-2">Stop</th>
+                        <th class="px-4 py-2">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="schedules-data-table-body">
+                    <tr><td colspan="5" class="p-4 text-center text-gray-500">Loading schedules...</td></tr>
+                </tbody>
+            </table>
+        </div>
+      </div>
+
+      </main>
+
+  </div>
+
+  <script>
+    function logoutAdmin() {
+      // need to implement
+      alert("Logged out!");
+    }
+
+    // --- Global Helper Functions ---
+
+    const busesTableBody = document.getElementById('buses-data-table-body');
+    const schedulesTableBody = document.getElementById('schedules-data-table-body');
+    const scheduleBusSelect = document.getElementById('schedule-bus');
+    const scheduleStopSelect = document.getElementById('schedule-stop');
+
+
+    // --- CORE PANEL SWITCHING MODIFICATION ---
+
+    // Update switchAdminPanel function to load data for new panels
+    function switchAdminPanel(panelId) {
+        // 1. Hide all panels
+        document.querySelectorAll('.admin-panel').forEach(panel => {
+            panel.classList.add('hidden');
+        });
+
+        // 2. Show the target panel and load data
+        const targetPanel = document.getElementById(panelId);
+        if (targetPanel) {
+            targetPanel.classList.remove('hidden');
+            
+            if (panelId === 'stops-panel') {
+                loadStopsData();
+            } else if (panelId === 'drivers-panel') {
+                loadBusesData();
+            } else if (panelId === 'schedules-panel') {
+                loadSchedulesDependencies(); // Load buses/stops first
+                loadSchedulesData();
+            }
+        }
+
+        // 3. Update active state of nav buttons (Ensure your HTML buttons have data-panel attributes)
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.classList.remove('bg-gray-700', 'font-bold');
+        });
+        const activeButton = document.querySelector(`[data-panel="${panelId}"]`);
+        if (activeButton) {
+            activeButton.classList.add('bg-gray-700', 'font-bold');
+        }
+    }
+
+    // --- STOP MANAGEMENT FUNCTIONS ---
+
+    const stopsTableBody = document.getElementById('stops-data-table-body');
+
+    async function loadStopsData() {
+        stopsTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">Loading stops...</td></tr>';
+        
+        try {
+            const response = await fetch('/api/stops');
+            if (!response.ok) throw new Error('Network response was not ok');
+            
+            const stops = await response.json();
+            renderStopsTable(stops);
+        } catch (error) {
+            console.error("Error fetching stops:", error);
+            stopsTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-red-600">Failed to load stops.</td></tr>';
+        }
+    }
+
+    function renderStopsTable(stops) {
+        stopsTableBody.innerHTML = '';
+        
+        if (stops.length === 0) {
+            stopsTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No stops defined in the database.</td></tr>';
+            return;
+        }
+
+        stops.forEach(stop => {
+            const row = stopsTableBody.insertRow();
+            row.className = 'border-b hover:bg-gray-50';
+
+            // Zone
+            row.insertCell().textContent = stop.zone;
+            
+            // Stop Name
+            row.insertCell().textContent = stop.name;
+            
+            // ID (for quick reference)
+            row.insertCell().textContent = stop._id;
+
+            // Actions (Delete button)
+            const actionsCell = row.insertCell();
+            actionsCell.className = 'px-4 py-2';
+            actionsCell.innerHTML = `
+                <button 
+                    onclick="deleteStop('${stop._id}')" 
+                    class="bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition"
+                >
+                    Delete
+                </button>
+            `;
+        });
+    }
+
+    async function deleteStop(id) {
+        if (!confirm(`Are you sure you want to delete stop ID: ${id}?`)) {
+            return;
+        }
+        
+        try {
+            // Assuming a DELETE request to /api/stops/:id
+            const response = await fetch(`/api/stops/${id}`, { method: 'DELETE' });
+
+            if (!response.ok) throw new Error('Failed to delete stop');
+
+            // Reload the data to update the table
+            loadStopsData();
+            
+        } catch (error) {
+            console.error("Error deleting stop:", error);
+            alert("Error: Could not delete stop.");
+        }
+    }
+
+
+    // --- INITIALIZATION ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. Set up navigation links
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const panelId = button.getAttribute('data-panel');
+                switchAdminPanel(panelId);
+            });
+        });
+
+        // 2. Set up the default panel (welcome or stops panel)
+        switchAdminPanel('stops-panel');
+
+        // 3. Set up Add Stop Form submission
+        const form = document.getElementById('add-stop-form');
+        const messageElement = document.getElementById('stop-form-message');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = form.elements['stop-name'].value;
+            const zone = form.elements['stop-zone'].value;
+            
+            messageElement.classList.remove('hidden', 'text-green-600', 'text-red-600');
+            messageElement.classList.add('text-gray-500');
+            messageElement.textContent = "Adding stop...";
+            
+            try {
+                // Assuming a POST request to /api/stops creates a new stop
+                const response = await fetch('/api/stops', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, zone })
+                });
+                
+                if (!response.ok) throw new Error('Failed to create new stop');
+
+                // Success feedback and reload
+                messageElement.classList.add('text-green-600');
+                messageElement.textContent = `Successfully added stop: ${name}.`;
+                form.reset(); // Clear the form
+                loadStopsData(); // Reload the table
+                
+            } catch (error) {
+                console.error("Error adding stop:", error);
+                messageElement.classList.add('text-red-600');
+                messageElement.textContent = "Error adding stop. Please check server logs.";
+            }
+        });
+    });
+
+    async function loadBusesData() {
+    busesTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">Loading bus fleet...</td></tr>';
+    
+    try {
+        const response = await fetch('/api/buses');
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const buses = await response.json();
+        renderBusesTable(buses);
+    } catch (error) {
+        console.error("Error fetching buses:", error);
+        busesTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-red-600">Failed to load bus data.</td></tr>';
+    }
+    }
+
+    function renderBusesTable(buses) {
+        busesTableBody.innerHTML = '';
+        if (buses.length === 0) {
+            busesTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No buses defined.</td></tr>';
+            return;
+        }
+
+        buses.forEach(bus => {
+            const row = busesTableBody.insertRow();
+            row.className = 'border-b hover:bg-gray-50';
+
+            row.insertCell().textContent = bus.busNumber;
+            row.insertCell().textContent = bus.model;
+            row.insertCell().textContent = bus.capacity;
+            row.insertCell().textContent = bus.driverName || 'N/A';
+        });
+    }
+
+    async function loadSchedulesDependencies() {
+        // Fetch buses for the dropdown
+        try {
+            const busResponse = await fetch('/api/buses');
+            const buses = await busResponse.json();
+            scheduleBusSelect.innerHTML = '<option value="">Select Bus</option>';
+            buses.forEach(bus => {
+                scheduleBusSelect.innerHTML += `<option value="${bus._id}">${bus.busNumber} (${bus.model})</option>`;
+            });
+        } catch (e) {
+            console.error("Failed to load buses for schedule form:", e);
+        }
+        
+        // Fetch stops for the dropdown
+        try {
+            const stopResponse = await fetch('/api/stops');
+            const stops = await stopResponse.json();
+            scheduleStopSelect.innerHTML = '<option value="">Select Stop</option>';
+            stops.forEach(stop => {
+                scheduleStopSelect.innerHTML += `<option value="${stop._id}">${stop.name} (${stop.zone})</option>`;
+            });
+        } catch (e) {
+            console.error("Failed to load stops for schedule form:", e);
+        }
+    }
+
+    async function loadSchedulesData() {
+        schedulesTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Loading schedules...</td></tr>';
+        
+        try {
+            const response = await fetch('/api/buses/schedules');
+            if (!response.ok) throw new Error('Network response was not ok');
+            
+            const schedules = await response.json();
+            renderSchedulesTable(schedules);
+        } catch (error) {
+            console.error("Error fetching schedules:", error);
+            schedulesTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-600">Failed to load schedules.</td></tr>';
+        }
+    }
+
+    function renderSchedulesTable(schedules) {
+        schedulesTableBody.innerHTML = '';
+        if (schedules.length === 0) {
+            schedulesTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">No upcoming schedules.</td></tr>';
+            return;
+        }
+
+        schedules.forEach(schedule => {
+            const date = new Date(schedule.date).toLocaleDateString();
+            
+            const row = schedulesTableBody.insertRow();
+            row.className = 'border-b hover:bg-gray-50';
+
+            row.insertCell().textContent = date;
+            row.insertCell().textContent = schedule.departureTime;
+            // Bus detail comes from populated 'bus' object
+            row.insertCell().textContent = `${schedule.bus.model} (${schedule.bus.busNumber})`;
+            // Stop detail comes from populated 'stop' object
+            row.insertCell().textContent = `${schedule.stop.name} (${schedule.stop.zone})`;
+            row.insertCell().textContent = schedule.status;
+        });
+    }
+  </script>
+
+</body>
+</html>

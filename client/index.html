@@ -265,38 +265,35 @@
     <!-- AVAILABLE ROUTES -->
     <section class="bg-fastCyan text-center py-16">
       <h3 class="text-4xl font-bold mb-8">Available Routes</h3>
-
-      <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-        <table class="min-w-full border border-gray-300 text-left">
-          <thead class="bg-gray-800 text-white">
-            <tr>
-              <th class="px-4 py-2">Zone</th>
-              <th class="px-4 py-2">Stop</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-b">
-              <td class="px-4 py-2">Islamabad</td>
-              <td class="px-4 py-2">G-9, Kashmir Highway</td>
-            </tr>
-            <tr class="border-b">
-              <td class="px-4 py-2">Islamabad</td>
-              <td class="px-4 py-2">6th Road, Muree Road</td>
-            </tr>
-            <tr class="border-b">
-              <td class="px-4 py-2">Islamabad</td>
-              <td class="px-4 py-2">Khanna Pull Stop, Expressway</td>
-            </tr>
-            <tr class="border-b">
-              <td class="px-4 py-2">Rawalpindi</td>
-              <td class="px-4 py-2">Askari 14, Sector A,B, Main Gate</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-2">Rawalpindi</td>
-              <td class="px-4 py-2">Main Peshawar Road</td>
-            </tr>
-          </tbody>
-        </table>
+    
+      <div class="max-w-6xl mx-auto grid grid-cols-1 gap-8 md:grid-cols-2">
+        
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+          <h4 class="text-xl font-bold bg-gray-200 py-3 text-gray-800">Islamabad Zone Stops</h4>
+          <table class="min-w-full text-left">
+            <thead class="bg-gray-800 text-white">
+              <tr>
+                <th class="px-4 py-2">Stop</th>
+              </tr>
+            </thead>
+            <tbody id="islamabad-table-body">
+              </tbody>
+          </table>
+        </div>
+    
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+          <h4 class="text-xl font-bold bg-gray-200 py-3 text-gray-800">Rawalpindi Zone Stops</h4>
+          <table class="min-w-full text-left">
+            <thead class="bg-gray-800 text-white">
+              <tr>
+                <th class="px-4 py-2">Stop</th>
+              </tr>
+            </thead>
+            <tbody id="rawalpindi-table-body">
+              </tbody>
+          </table>
+        </div>
+    
       </div>
     </section>
 
@@ -381,6 +378,67 @@
         setupAuthHandlers(); // Existing call for form binding
         updateAuthButton();  // Check auth status and update button
       });
+
+      async function loadAvailableRoutes() {
+        const islamabadBody = document.getElementById('islamabad-table-body');
+        const rawalpindiBody = document.getElementById('rawalpindi-table-body');
+        
+        // Initial loading state
+        islamabadBody.innerHTML = '<tr><td class="px-4 py-2 text-center text-gray-500">Loading...</td></tr>';
+        rawalpindiBody.innerHTML = '<tr><td class="px-4 py-2 text-center text-gray-500">Loading...</td></tr>';
+
+        try {
+          const response = await fetch('/api/stops');
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch stops. Status: ${response.status}`);
+          }
+          
+          const stopsData = await response.json();
+          
+          // 1. Filter the data into two separate arrays
+          const islamabadStops = stopsData.filter(stop => stop.zone === 'Islamabad');
+          const rawalpindiStops = stopsData.filter(stop => stop.zone === 'Rawalpindi');
+          
+          // 2. Function to render stops for a specific body element
+          const renderStops = (data, bodyElement) => {
+              // Clear loading/previous content
+              bodyElement.innerHTML = ''; 
+              
+              if (data.length === 0) {
+                  bodyElement.innerHTML = '<tr><td class="px-4 py-2 text-center text-gray-500">No stops found.</td></tr>';
+                  return;
+              }
+
+              data.forEach((stop, index) => {
+                  const stopName = stop.name;
+                  const newRow = bodyElement.insertRow();
+                  
+                  // Apply border-b to most rows
+                  newRow.className = index < data.length - 1 ? 'border-b' : '';
+                  
+                  // Insert Stop Name (td)
+                  let stopCell = newRow.insertCell();
+                  stopCell.className = 'px-4 py-2';
+                  stopCell.textContent = stopName;
+              });
+          };
+
+          // 3. Render both tables
+          renderStops(islamabadStops, islamabadBody);
+          renderStops(rawalpindiStops, rawalpindiBody);
+
+        } catch (error) {
+          console.error("Error loading available routes:", error);
+          // 4. Display an error message if the fetch fails
+          const errorMessage = '<tr><td class="px-4 py-2 text-red-600 text-center">Error loading data.</td></tr>';
+          islamabadBody.innerHTML = errorMessage;
+          rawalpindiBody.innerHTML = errorMessage;
+        }
+      }
+
+      // 5. Call the function when the page loads
+      document.addEventListener('DOMContentLoaded', loadAvailableRoutes);
 
     </script>
   </body>
