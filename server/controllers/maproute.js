@@ -1,4 +1,5 @@
 const express = require('express');
+const { User } = require('../config/db.js');
 const Stop = require('../config/stop.js');
 const Bus = require('../config/bus.js');
 const Schedule = require('../config/schedule.js');
@@ -100,6 +101,7 @@ router.get('/', async (req, res) => {
     res.json({
       stop,
       route: routeGeoJSON,
+      _id: bestSchedule._id,
       bus_details: {
         route_name: bestSchedule.routeName,
         plate_number: bus.busNumber,
@@ -116,6 +118,102 @@ router.get('/', async (req, res) => {
   } catch (err) {
     console.error(err?.response?.data || err.message);
     return res.status(502).json({ error: 'Routing failed', details: err?.message || err });
+  }
+});
+
+// SEAT RESERVATIONS
+router.post('/reserve', async (req, res) => {
+  const { userId, scheduleId, seatNumber } = req.body;
+  if (!userId || !scheduleId || seatNumber == null)
+    return res.status(400).json({ error: 'Missing parameters' });
+
+  try {
+    const user = await User.findById(userId);
+    const schedule = await Schedule.findById(scheduleId).populate('bus');
+    if (!user || !schedule)
+      return res.status(404).json({ error: 'User or schedule not found' });
+
+    // Is this seat already taken by anyone?
+    let alreadyReserved = false;
+    for (let u of await User.find({ "reservedSeats.schedule": scheduleId, "reservedSeats.seatNumber": seatNumber })) {
+      alreadyReserved = true;
+      break;
+    }
+    if (alreadyReserved)
+      return res.status(409).json({ error: 'Seat already reserved' });
+
+    // Are there enough seats on the bus?
+    if (schedule.seatsBooked >= schedule.bus.capacity)
+      return res.status(409).json({ error: 'Bus is full' });
+
+    // All good - update both user and schedule
+    schedule.seatsBooked += 1;
+    await schedule.save();
+
+    user.reservedSeats.push({ schedule: scheduleId, seatNumber });
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Seat reserved',
+      reservedSeats: user.reservedSeats,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Cancel reservation (keep field names consistent)
+router.post('/reservations/cancel', async (req, res) => {
+  const { userId, scheduleId, seatNumber } = req.body;
+  if (!userId || !scheduleId || seatNumber == null)
+    return res.status(400).json({ error: 'Missing parameters' });
+
+  try {
+    const user = await User.findById(userId);
+    const schedule = await Schedule.findById(scheduleId);
+    if (!user || !schedule)
+      return res.status(404).json({ error: 'User or schedule not found' });
+
+    const reservationIndex = user.reservedSeats.findIndex(
+      r => r.schedule.equals(scheduleId) && r.seatNumber === seatNumber
+    );
+    if (reservationIndex === -1)
+      return res.status(404).json({ error: 'Reservation not found for this seat' });
+
+    // Remove reservation from user
+    user.reservedSeats.splice(reservationIndex, 1);
+    await user.save();
+
+    // Decrement seat count (never < 0)
+    schedule.seatsBooked = Math.max(schedule.seatsBooked - 1, 0);
+    await schedule.save();
+
+    res.json({ success: true, message: 'Reservation cancelled', reservedSeats: user.reservedSeats });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get all reservations for a user
+router.get('/users/:id/reservations', async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId)
+      .populate({
+        path: 'reservedSeats.schedule',
+        populate: { path: 'bus stop' }
+      });
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json({ reservedSeats: user.reservedSeats });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error', details: err.message });
   }
 });
 

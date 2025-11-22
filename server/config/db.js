@@ -47,8 +47,16 @@ const userSchema = new mongoose.Schema({
 
   resetCode: {
     type: String,
-  }
+  },
   
+  reservedSeats: [
+    {
+      schedule: {type: mongoose.Schema.Types.ObjectId, ref: 'Schedule', required: true },
+      seatNumber: { type: Number, required: true },
+      status: { type: String, enum: ['reserved'], default: 'reserved' }
+    }
+  ]
+
 });
 
 const User = mongoose.model('User', userSchema);

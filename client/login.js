@@ -27,6 +27,7 @@ function setupAuthHandlers() {
         if (res.ok && data.success) {
           alert(`Welcome ${data.user.name}!`);
           localStorage.setItem("token", data.token); // save token for allocator access
+          localStorage.setItem("user", JSON.stringify(data.user));
           window.location.href = '/allocator.html';
           updateAuthButton();
         } else {

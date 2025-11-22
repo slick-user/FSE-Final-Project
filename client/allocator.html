@@ -215,10 +215,18 @@
             </div>
         </div>
     </main>
-
+    
     <div id="bus-result-container" class="mt-12">
     </div>
+
+    <div class="mb-6 text-center" id="seat-selection-container" style="display: none;">
+      <label class="block font-semibold text-white mb-2">Select Seat</label>
+      <select id="seat-select" class="p-2 rounded text-black">
+        <!-- Options populated dynamically -->
+      </select>
+    </div>
     
+
     <!-- FOOTER -->
     <footer class="site-footer">
       <div class="footer-left">
@@ -291,7 +299,56 @@
         setupAuthHandlers(); // Existing call for form binding
         updateAuthButton();  // NEW: Check auth status and update button
         populateStops();  // Add all the possible stops
+        checkExistingReservation();
       });
+
+      async function checkExistingReservation() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user._id) return;
+
+        try {
+          const res = await fetch(`/api/route/users/${user._id}/reservations`);
+          const data = await res.json();
+          if (data.reservedSeats && data.reservedSeats.length > 0) {
+            // Show details to user
+            const r = data.reservedSeats[0]; // or show a list if >1
+            document.getElementById("bus-result-container").innerHTML =
+              `<div class="bus-found-banner">
+                <h3 class="text-3xl mb-2 text-white">Active Reservation</h3>
+                <p class="mb-2 text-white">Bus Schedule: ${r.schedule.routeName || "(unknown)"}</p>
+                <p class="mb-2 text-white">Seat Number: ${r.seatNumber}</p>
+                <button class="btn bg-black text-white" onclick="cancelReservation('${r.schedule._id}', ${r.seatNumber})">Cancel Reservation</button>
+              </div>`;
+            // Hide reservation controls
+            document.getElementById('seat-selection-container').style.display = 'none';
+          }
+        } catch (error) {
+          console.error("Error checking reservation", error);
+        }
+      }
+
+      function getUserIdFromToken(token) {
+        try {
+          if (!token) return null;
+          const parts = token.split('.');
+          if (parts.length !== 3) return null;
+
+          // The payload is the second part (index 1) and is base64 encoded
+          const encodedPayload = parts[1];
+          
+          // Use atob to decode the base64 string
+          // NOTE: This is a browser function and won't work in Node.js
+          const rawPayload = atob(encodedPayload);
+          const payload = JSON.parse(rawPayload);
+
+          // Assuming your server put the MongoDB ID in a field named 'id' or '_id' in the token payload
+          return payload.id || payload._id || payload.sub; 
+
+        } catch (e) {
+          console.error("Failed to decode token:", e);
+          return null;
+        }
+      }
 
       // Map Initialization (Starts at FAST University)
       const FAST_COORDS = [33.6426, 73.0394];
@@ -377,20 +434,27 @@
                 </div>
 
                 <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
-                    <button class="btn after:bg-white" onclick="document.getElementById('bus-result-container').innerHTML = ''">
+                    <button class="btn after:bg-white" onclick="document.getElementById('bus-result-container').innerHTML = ''; 
+                                                               document.getElementById('seat-selection-container').style.display = 'none'">
                         <span class="top-key"></span>
                         <span class="text">Find Another Bus</span>
                         <span class="bottom-key-1"></span>
                         <span class="bottom-key-2"></span>
                     </button>
-                    <button class="btn bg-black text-white after:bg-black">
+                    <button class="btn bg-black text-white after:bg-black"
+                            data-schedule-id="${data._id}"
+                            onclick="reserveSeat('${data._id}', getSelectedSeatNumber())">
                         <span class="top-key"></span>
                         <span class="text">Reserve Seat</span>
                         <span class="bottom-key-1"></span>
                         <span class="bottom-key-2"></span>
                     </button>
                 </div>
-            </div>`;
+
+              </div>`;
+
+          document.getElementById('seat-selection-container').style.display = 'block';
+          populateSeats(bus.capacity, bus.bookedSeats || 0);
         }
 
         async function handleFindBus(event) {
@@ -400,6 +464,101 @@
           const time = document.getElementById('time').value;
           if (!stopId || !time) return alert('Select a stop and time first');
           await showRoute(stopId, time);
+        }
+
+        async function reserveSeat(scheduleId, seatNumber) {
+          const user = JSON.parse(localStorage.getItem('user'));
+          if (!user) return alert('Please login');
+          if (!scheduleId) return alert('Missing schedule ID');
+          if (typeof seatNumber !== 'number' || isNaN(seatNumber)) return alert('Select a seat!');
+          try {
+            const res = await fetch('/api/route/reserve', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: user._id, scheduleId, seatNumber }),
+            });
+            let data;
+            try { 
+              data = await res.json();   // <-- assign to data OUTSIDE the catch
+            } catch(parseError) {
+              throw new Error(`Reservation response was not JSON`);
+            } 
+
+            // Save reservation so you can cancel later if needed.
+            window.lastReservation = { scheduleId, seatNumber };
+
+            if (res.ok && data.success) {
+              alert(`Seat ${seatNumber} reserved successfully!`);
+              // Disable controls
+              document.querySelector('button.btn.bg-black.text-white').disabled = true;
+              document.getElementById('seat-select').disabled = true;
+              document.getElementById('seat-selection-container').style.display = 'none';
+            } else {
+              alert('Reservation failed: ' + (data.error || data.message));
+            }
+          } catch (error) {
+            console.error(error);
+            alert('Network or server error.');
+          }
+        }
+
+        // Example: cancel reservation
+        // Robust cancelReservation (use only the arguments!)
+        async function cancelReservation(scheduleId, seatNumber) {
+          const user = JSON.parse(localStorage.getItem('user'));
+          if (!user) return alert('Please login');
+
+          try {
+            const res = await fetch('/api/route/reservations/cancel', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: user._id, scheduleId, seatNumber }),
+            });
+            const data = await res.json();
+            if (data.success) {
+              alert('Cancellation successful!');
+              document.getElementById('bus-result-container').innerHTML = '';
+              document.getElementById('seat-selection-container').style.display = 'none';
+              // Optionally, re-check for reservations so user can book a new seat:
+              setTimeout(checkExistingReservation, 250); // small delay to let backend update
+            } else {
+              alert('Cancel failed: ' + (data.error || data.message));
+            }
+          } catch (error) {
+            alert('Cancellation request failed: ' + error.message);
+          }
+          // Always clear lastReservation after any attempt
+          window.lastReservation = null;
+        }
+
+        // Display all reservations for current user
+        async function showReservations() {
+          const user = JSON.parse(localStorage.getItem('user'));
+          if (!user) return alert('Please login');
+          const res = await fetch(`/api/route/users/${user._id}/reservations`);
+          const data = await res.json();
+          if (data.reservedSeats) {
+            // update your DOM to list seats & schedules
+            console.log(data.reservedSeats);
+          }
+        }
+
+        function populateSeats(busCapacity, bookedSeats) {
+          const select = document.getElementById('seat-select');
+          select.innerHTML = '';
+
+          for (let i = 1; i <= busCapacity; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `Seat ${i}`;
+            if (i <= bookedSeats) option.disabled = true; // already booked
+            select.appendChild(option);
+          }
+        }
+
+        function getSelectedSeatNumber() {
+          const select = document.getElementById('seat-select');
+          return parseInt(select.value, 10); // Always a number
         }
 
     </script>
