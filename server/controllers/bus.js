@@ -34,6 +34,12 @@ router.post('/assign', async (req, res) => {
   res.json({ ok: true, schedule });
 });
 
+// GET /api/buses - Get all buses
+router.get('/', async (req, res) => {
+  const buses = await Bus.find().sort({ busNumber: 1 });
+  res.json(buses);
+});
+
 // GET /api/buses/schedules
 router.get('/schedules', async (req, res) => {
   const schedules = await Schedule.find()

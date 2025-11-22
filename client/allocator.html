@@ -216,30 +216,8 @@
         </div>
     </main>
 
-        <!-- BOTTOM CONTAINER: BUS FOUND -->
-        <!-- This static content is a placeholder and will be replaced by the HTMX response from the server -->
-        <div id="bus-result-container" class="mt-12 opacity-100 transition-opacity">
-            <div class="bus-found-banner">
-                <h3 class="text-3xl md:text-5xl font-extrabold text-black mb-4">Bus Found</h3>
-                <p class="text-xl md:text-2xl font-light mb-6 text-black">
-                    G-9 Kashmir Highway Departing at <span class="font-bold">3:20 PM</span>
-                </p>
-                <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
-                  <button class="btn after:bg-white">
-                      <span class="top-key"></span>
-                      <span class="text">Find Another Bus</span>
-                      <span class="bottom-key-1"></span>
-                      <span class="bottom-key-2"></span>
-                  </button>
-                  <button class="btn bg-black text-white after:bg-black">
-                    <span class="top-key"></span>
-                    <span class="text">Reserve Seat</span>
-                    <span class="bottom-key-1"></span>
-                    <span class="bottom-key-2"></span>
-                  </button> 
-                </div>
-            </div>
-        </div>
+    <div id="bus-result-container" class="mt-12">
+    </div>
     
     <!-- FOOTER -->
     <footer class="site-footer">
@@ -323,31 +301,105 @@
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
       let routeLayer = null;
+      let busStopMarker = null;
 
-      async function showRoute(stopId) {
-        const res = await fetch(`/api/route?stopId=${stopId}`);
+      async function showRoute(stopId, requestedDepartureTime) {
+        const res = await fetch(`/api/route?stopId=${stopId}&time=${requestedDepartureTime}`);
         if (!res.ok) {
-          alert('Route lookup failed');
+          // Attempt to parse the response body, but use a generic error message if it fails
+          const errorText = await res.text();
+        
+          document.getElementById('bus-result-container').innerHTML =
+              `<div class="bus-found-banner" style="background-image: none; background-color: #ef4444;"> 
+                  <h3 class="text-3xl font-extrabold text-white mb-4">Server Error</h3>
+                  <p class="text-xl font-light text-white">The bus allocation server returned a ${res.status} error.</p>
+                  <p class="text-sm font-light text-gray-200 mt-2">Check the backend service logs.</p>
+              </div>`;
+          if (routeLayer) map.removeLayer(routeLayer);
           return;
         }
         const data = await res.json();
+        
+        if (data.error || !data.bus_details) {
+          document.getElementById('bus-result-container').innerHTML =
+                    `<div class="bus-found-banner" style="background-image: none; background-color: #ef4444;"> 
+                        <h3 class="text-3xl font-extrabold text-white mb-4">Allocation Error</h3>
+                        <p class="text-xl font-light text-white">${data.message}</p>
+                    </div>`;
+          if (routeLayer) map.removeLayer(routeLayer);
+          return;
+        }
+        
+        const bus = data.bus_details;
+
         if (routeLayer) map.removeLayer(routeLayer);
+        if (busStopMarker) map.removeLayer(busStopMarker);
+
         routeLayer = L.geoJSON(data.route).addTo(map);
         map.fitBounds(routeLayer.getBounds());
+
+        // Add the destination marker
+        const endCoords = data.route.features[0].geometry.coordinates.slice(-1)[0];
+        busStopMarker = L.marker([endCoords[1], endCoords[0]]).addTo(map)
+            .bindPopup(`<b>${data.stop.name}</b>`).openPopup();
+
+
+        // 4. DYNAMIC BANNER RENDERING
+
+        // Flag to determine styling
+        const isToday = bus.is_today;
+
+        const bannerTitle = isToday ? `${bus.route_name} Bus Allocated!` : 'Next Trip Suggested';
+        const timeColor = 'text-fastGold';
+        const departureTimeString = bus.departure_time;
+
         document.getElementById('bus-result-container').innerHTML =
-          `<div class="bus-found-banner">
-            <h3 class="text-3xl font-extrabold text-black mb-4">${data.stop.name}</h3>
-            <p class="text-xl font-light text-black">
-              Distance ${(data.distance_m/1000).toFixed(1)} km · ${(data.duration_s/60).toFixed(0)} min
-            </p>
-          </div>`;
+            `<div class="bus-found-banner">
+                <h3 class="text-3xl md:text-5xl font-extrabold text-white mb-4">${bannerTitle}</h3>
+                
+                <div class="mb-6 text-center">
+                    <p class="text-xl md:text-2xl font-light mb-2 text-white">
+                        <span class="font-bold">${bus.plate_number}</span> (${bus.model})
+                    </p>
+                    <p class="text-xl md:text-2xl font-light text-white">
+                        Driver: ${bus.driver_name} · Seats: ${bus.capacity}
+                    </p>
+                </div>
+                
+                <p class="text-2xl md:text-4xl font-light mb-6">
+                    ${bus.departure_message}
+                    <span class="font-bold ${timeColor}"> ${departureTimeString}</span>
+                </p>
+
+                <div class="flex justify-center space-x-8 text-xl text-white font-semibold mb-8 border-t border-b border-gray-500 py-3">
+                    <span>Distance: <span class="text-fastGold">${bus.distance_km} km</span></span>
+                    <span>Travel Time: <span class="text-fastGold">${bus.travel_time_min} min</span></span>
+                </div>
+
+                <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
+                    <button class="btn after:bg-white" onclick="document.getElementById('bus-result-container').innerHTML = ''">
+                        <span class="top-key"></span>
+                        <span class="text">Find Another Bus</span>
+                        <span class="bottom-key-1"></span>
+                        <span class="bottom-key-2"></span>
+                    </button>
+                    <button class="btn bg-black text-white after:bg-black">
+                        <span class="top-key"></span>
+                        <span class="text">Reserve Seat</span>
+                        <span class="bottom-key-1"></span>
+                        <span class="bottom-key-2"></span>
+                    </button>
+                </div>
+            </div>`;
         }
 
         async function handleFindBus(event) {
           event.preventDefault();
           const stopId = document.getElementById('stop-select').value;
-          if (!stopId) return alert('Select a stop first');
-          await showRoute(stopId);
+
+          const time = document.getElementById('time').value;
+          if (!stopId || !time) return alert('Select a stop and time first');
+          await showRoute(stopId, time);
         }
 
     </script>

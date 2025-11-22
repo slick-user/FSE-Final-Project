@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const busSchema = new mongoose.Schema({
   busNumber: { type: String, required: true, unique: true },
+  
+  model: { type: String, required: true },
+  driverName: { type: String, required: true },
+  
   capacity: { type: Number, default: 40 },
   status: { type: String, enum: ['active','maintenance','inactive'], default: 'active' },
   currentLocation: {
