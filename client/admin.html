@@ -598,6 +598,46 @@
       switchAdminPanel('stops-panel');
     });
 
+  function checkAdminAccess() {
+        const userJson = localStorage.getItem('user');
+        const token = localStorage.getItem('token');
+
+        if (!userJson || !token) {
+            // Not logged in or missing data
+            alert("Access Denied: Please log in.");
+            window.location.href = '/index.html'; // Redirect to login page
+            return false;
+        }
+
+        try {
+            const user = JSON.parse(userJson);
+            if (user.role !== 'admin') {
+                // Logged in, but not an admin
+                alert("Access Denied: Insufficient privileges.");
+                window.location.href = '/allocator.html'; // Redirect to student page
+                return false;
+            }
+        } catch (e) {
+            // User data corrupted
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            alert("Access Denied: Invalid user data.");
+            window.location.href = '/index.html';
+            return false;
+        }
+        return true;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Run the access check immediately when the admin panel loads
+        if (checkAdminAccess()) {
+            // Only load data if the user is verified as an admin
+            // This is where you'd call initial data loading functions like switchAdminPanel('welcome-panel')
+            switchAdminPanel('welcome-panel'); 
+            loadAdminDependencies(); // Call any function that loads initial data/forms
+        }
+    });
+
   </script>
 
 </body>

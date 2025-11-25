@@ -144,4 +144,52 @@ router.delete('/bus/:busId', async (req, res) => {
   res.json({ deleted: result.deletedCount });
 });
 
+// ========== ROUTE CRUD (Base URL: /api/buses/routes) ==========
+
+// GET all routes
+router.get('/routes', async (req, res) => {
+    try {
+        const routes = await Route.find().sort({ routeNumber: 1 });
+        res.json(routes);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// GET a single route
+router.get('/routes/view/:id', async (req, res) => {
+    try {
+        const route = await Route.findById(req.params.id);
+        if (!route) return res.status(404).json({ error: "Route not found" });
+        res.json(route);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ADD route
+router.post('/routes/add', async (req, res) => {
+    try {
+        const route = await Route.create(req.body);
+        res.json(route);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// UPDATE route
+router.put('/routes/update/:id', async (req, res) => {
+    try {
+        const route = await Route.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!route) return res.status(404).json({ error: 'Route not found' });
+        res.json(route);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// DELETE route
+router.delete('/routes/delete/:id', async (req, res) => {
+    try {
+        const route = await Route.findByIdAndDelete(req.params.id);
+        if (!route) return res.status(404).json({ error: "Route not found" });
+
+        // NOTE: In a complete system, you would also remove any references to this route from Stops or Schedules.
+
+        res.json({ message: "Route removed successfully" });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 module.exports = router;

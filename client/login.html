@@ -114,16 +114,26 @@
                 />
               </div>
 
-              <div class="flex items-center justify-between">
-                <label class="block text-sm font-medium text-gray-700">Upload Photo of Student ID Card</label>
-                <div class="w-8 h-8 rounded-full bg-gray-200 border border-gray-400 flex items-center justify-center cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-gray-600">
-                    <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498
-                                     0 .75.75 0 0 1-.437.695A18.029 18.029 
-                                     0 0 1 12 21.75c-2.459 0-4.917-.404-7.147-1.24.162-.07.319-.155.437-.695Z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-              </div>
+<div class="flex flex-col space-y-2">
+    <label class="block text-sm font-medium text-gray-700">Upload Student ID Card Photo</label>
+    <div class="flex items-center justify-between">
+        <input type="file" 
+               id="modal-signup-photo" 
+               name="studentPhoto"
+               accept="image/*"
+               class="hidden" 
+        />
+        
+        <button type="button" 
+                id="photo-upload-trigger"
+                class="bg-fastBlue text-white text-sm px-3 py-1.5 rounded hover:bg-blue-700 transition"
+                onclick="document.getElementById('modal-signup-photo').click()">
+            Choose File
+        </button>
+
+        <span id="photo-filename" class="text-sm text-gray-500 truncate max-w-[150px]">No file chosen</span>
+    </div>
+</div>
 
               <button type="submit" 
                       class="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"

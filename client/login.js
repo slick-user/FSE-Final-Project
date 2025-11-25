@@ -28,7 +28,11 @@ function setupAuthHandlers() {
           alert(`Welcome ${data.user.name}!`);
           localStorage.setItem("token", data.token); // save token for allocator access
           localStorage.setItem("user", JSON.stringify(data.user));
-          window.location.href = '/allocator.html';
+          if (data.user.role == 'admin') {
+            window.location.href = '/admin.html';
+          } else {
+            window.location.href = '/allocator.html';
+          }
           updateAuthButton();
         } else {
           alert(`Login failed: ${data.message || data.error || 'Invalid credentials'}`);
