@@ -10,7 +10,7 @@ const busSchema = new mongoose.Schema({
   status: { type: String, enum: ['active','maintenance','inactive'], default: 'active' },
   currentLocation: {
     type: { type: String, enum: ['Point'], default: 'Point' },
-    coordinates: { type: [Number], default: [0,0] }
+    coordinates: { type: [Number], default: [73.0372, 33.6405] }
   }
 }, { timestamps: true });
 

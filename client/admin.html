@@ -28,7 +28,7 @@
   <!-- TOP NAVBAR -->
   <header class="bg-black text-white flex justify-between items-center px-8 py-4 shadow-xl">
     <div class="flex items-center space-x-3">
-      <img src="static/images/logo.png" class="w-10 h-10 rounded-full" />
+      <img src="static/images/logo.png" class="w-10 h-10 rounded-full" alt="logo" />
       <h1 class="text-xl font-bold">Admin Panel</h1>
     </div>
     <button 
@@ -40,32 +40,32 @@
   </header>
 
   <!-- LAYOUT GRID -->
-  <div class="grid grid-cols-12">
+  <div class="grid grid-cols-12 min-h-screen">
     
     <!-- SIDEBAR -->
     <aside class="col-span-2 bg-gray-900 text-white h-screen p-6 space-y-6">
       <h2 class="text-lg font-semibold tracking-wide">Menu</h2>
       
       <nav class="space-y-3">
-        <button hx-get="/admin/routes" hx-target="#admin-content" 
+        <button onclick="switchAdminPanel('routes-panel')" 
                 class="w-full text-left py-2 px-3 rounded hover:bg-gray-700 transition nav-button" 
                 data-panel="routes-panel">
           Manage Routes
         </button>
       
-        <button hx-get="/admin/stops" hx-target="#admin-content" 
+        <button onclick="switchAdminPanel('stops-panel')" 
                 class="w-full text-left py-2 px-3 rounded hover:bg-gray-700 transition nav-button" 
                 data-panel="stops-panel">
           Manage Stops
         </button>
       
-        <button hx-get="/admin/drivers" hx-target="#admin-content" 
+        <button onclick="switchAdminPanel('drivers-panel')" 
                 class="w-full text-left py-2 px-3 rounded hover:bg-gray-700 transition nav-button"
                 data-panel="drivers-panel">
-          Drivers
+          Buses / Drivers
         </button>
       
-        <button hx-get="/admin/schedules" hx-target="#admin-content" 
+        <button onclick="switchAdminPanel('schedules-panel')" 
                 class="w-full text-left py-2 px-3 rounded hover:bg-gray-700 transition nav-button"
                 data-panel="schedules-panel">
           Schedules
@@ -76,6 +76,7 @@
     
     <main id="admin-content" class="col-span-10 p-10">
 
+      <!-- WELCOME -->
       <div id="welcome-panel" class="admin-panel">
         <div class="text-center py-12">
           <h1 class="text-4xl font-bold text-fastBlue">Welcome, Admin</h1>
@@ -85,6 +86,7 @@
         </div>
       </div>
       
+      <!-- STOPS -->
       <div id="stops-panel" class="admin-panel hidden">
         <h2 class="text-3xl font-bold mb-6">🚌 Manage Stops</h2>
         
@@ -127,15 +129,50 @@
         </div>
       </div>
       
+      <!-- ROUTES (placeholder) -->
       <div id="routes-panel" class="admin-panel hidden">
         <h2 class="text-3xl font-bold mb-6">🛣️ Manage Routes</h2>
         <p class="text-gray-600">This section is under construction.</p>
       </div>
+
+      <!-- BUSES / DRIVERS -->
       <div id="drivers-panel" class="admin-panel hidden">
-        <h2 class="text-3xl font-bold mb-6">🚌 Manage Buses/Drivers</h2>
+        <h2 class="text-3xl font-bold mb-6">🚌 Manage Buses & Drivers</h2>
         
+        <div class="bg-white p-6 rounded shadow mb-8">
+            <h3 class="text-xl font-semibold mb-4">Add New Bus</h3>
+            <form id="add-bus-form" class="grid grid-cols-5 gap-4 items-end">
+
+                <div>
+                    <label class="block text-sm font-medium">Bus Number</label>
+                    <input id="busNumber" required class="mt-1 block w-full p-2 border rounded" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Model</label>
+                    <input id="busModel" required class="mt-1 block w-full p-2 border rounded" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Driver Name</label>
+                    <input id="busDriver" required class="mt-1 block w-full p-2 border rounded" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Capacity</label>
+                    <input id="busCapacity" type="number" min="1" class="mt-1 block w-full p-2 border rounded" value="40" />
+                </div>
+
+                <button type="submit" class="bg-fastBlue text-white h-full py-2 rounded hover:bg-blue-700 transition">
+                    Add Bus
+                </button>
+            </form>
+
+            <p id="bus-form-message" class="mt-3 text-sm hidden"></p>
+        </div>
+
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-            <h3 class="text-xl font-semibold p-4 bg-gray-100">Current Bus Fleet</h3>
+            <h3 class="text-xl font-semibold p-4 bg-gray-100">Current Bus Fleet</h3>      
             <table class="min-w-full text-left">
                 <thead class="bg-gray-800 text-white">
                     <tr>
@@ -143,15 +180,17 @@
                         <th class="px-4 py-2">Model</th>
                         <th class="px-4 py-2">Capacity</th>
                         <th class="px-4 py-2">Driver Name</th>
+                        <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="buses-data-table-body">
-                    <tr><td colspan="4" class="p-4 text-center text-gray-500">Loading buses...</td></tr>
+                    <tr><td colspan="5" class="p-4 text-center text-gray-500">Loading buses...</td></tr>
                 </tbody>
             </table>
         </div>
       </div>
 
+      <!-- SCHEDULES -->
       <div id="schedules-panel" class="admin-panel hidden">
         <h2 class="text-3xl font-bold mb-6">🗓️ Manage Schedules</h2>
 
@@ -172,11 +211,11 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Date</label>
-                    <input type="date" name="date" required class="mt-1 block w-full p-2 border rounded-md">
+                    <input id="schedule-date" type="date" name="date" required class="mt-1 block w-full p-2 border rounded-md" />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Time</label>
-                    <input type="time" name="departureTime" required class="mt-1 block w-full p-2 border rounded-md">
+                    <input id="schedule-time" type="time" name="departureTime" required class="mt-1 block w-full p-2 border rounded-md" />
                 </div>
                 <button type="submit" class="bg-fastBlue text-white h-full py-2 rounded hover:bg-blue-700 transition">
                     Assign Schedule
@@ -195,10 +234,11 @@
                         <th class="px-4 py-2">Bus/Plate</th>
                         <th class="px-4 py-2">Stop</th>
                         <th class="px-4 py-2">Status</th>
+                        <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="schedules-data-table-body">
-                    <tr><td colspan="5" class="p-4 text-center text-gray-500">Loading schedules...</td></tr>
+                    <tr><td colspan="6" class="p-4 text-center text-gray-500">Loading schedules...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -210,275 +250,354 @@
 
   <script>
     function logoutAdmin() {
-      // need to implement
+      // replace with real logout flow if you have one
+      localStorage.removeItem('token');
       alert("Logged out!");
+      window.location.href = '/';
     }
 
-    // --- Global Helper Functions ---
-
+    // --- Global Helper Elements ---
     const busesTableBody = document.getElementById('buses-data-table-body');
+    const stopsTableBody = document.getElementById('stops-data-table-body');
     const schedulesTableBody = document.getElementById('schedules-data-table-body');
+
     const scheduleBusSelect = document.getElementById('schedule-bus');
     const scheduleStopSelect = document.getElementById('schedule-stop');
 
-
-    // --- CORE PANEL SWITCHING MODIFICATION ---
-
-    // Update switchAdminPanel function to load data for new panels
+    // --- Panel switching ---
     function switchAdminPanel(panelId) {
-        // 1. Hide all panels
-        document.querySelectorAll('.admin-panel').forEach(panel => {
-            panel.classList.add('hidden');
-        });
-
-        // 2. Show the target panel and load data
+        document.querySelectorAll('.admin-panel').forEach(panel => panel.classList.add('hidden'));
         const targetPanel = document.getElementById(panelId);
-        if (targetPanel) {
-            targetPanel.classList.remove('hidden');
-            
-            if (panelId === 'stops-panel') {
-                loadStopsData();
-            } else if (panelId === 'drivers-panel') {
-                loadBusesData();
-            } else if (panelId === 'schedules-panel') {
-                loadSchedulesDependencies(); // Load buses/stops first
-                loadSchedulesData();
-            }
+        if (!targetPanel) return;
+        targetPanel.classList.remove('hidden');
+
+        // load data for that panel
+        if (panelId === 'stops-panel') loadStopsData();
+        if (panelId === 'drivers-panel') loadBusesData();
+        if (panelId === 'schedules-panel') {
+            loadSchedulesDependencies();
+            loadSchedulesData();
         }
 
-        // 3. Update active state of nav buttons (Ensure your HTML buttons have data-panel attributes)
-        document.querySelectorAll('.nav-button').forEach(button => {
-            button.classList.remove('bg-gray-700', 'font-bold');
-        });
+        // visual active state
+        document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('bg-gray-700','font-bold'));
         const activeButton = document.querySelector(`[data-panel="${panelId}"]`);
-        if (activeButton) {
-            activeButton.classList.add('bg-gray-700', 'font-bold');
-        }
+        if (activeButton) activeButton.classList.add('bg-gray-700','font-bold');
     }
 
-    // --- STOP MANAGEMENT FUNCTIONS ---
-
-    const stopsTableBody = document.getElementById('stops-data-table-body');
-
+    // ----------------- STOPS -----------------
     async function loadStopsData() {
         stopsTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">Loading stops...</td></tr>';
-        
         try {
-            const response = await fetch('/api/stops');
-            if (!response.ok) throw new Error('Network response was not ok');
-            
-            const stops = await response.json();
+            const res = await fetch('/api/stops');
+            if (!res.ok) throw new Error('Network error');
+            const stops = await res.json();
             renderStopsTable(stops);
-        } catch (error) {
-            console.error("Error fetching stops:", error);
+        } catch (err) {
+            console.error(err);
             stopsTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-red-600">Failed to load stops.</td></tr>';
         }
     }
 
     function renderStopsTable(stops) {
         stopsTableBody.innerHTML = '';
-        
-        if (stops.length === 0) {
-            stopsTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No stops defined in the database.</td></tr>';
+        if (!Array.isArray(stops) || stops.length === 0) {
+            stopsTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No stops defined.</td></tr>';
             return;
         }
-
         stops.forEach(stop => {
-            const row = stopsTableBody.insertRow();
-            row.className = 'border-b hover:bg-gray-50';
-
-            // Zone
-            row.insertCell().textContent = stop.zone;
-            
-            // Stop Name
-            row.insertCell().textContent = stop.name;
-            
-            // ID (for quick reference)
-            row.insertCell().textContent = stop._id;
-
-            // Actions (Delete button)
-            const actionsCell = row.insertCell();
-            actionsCell.className = 'px-4 py-2';
-            actionsCell.innerHTML = `
-                <button 
-                    onclick="deleteStop('${stop._id}')" 
-                    class="bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition"
-                >
-                    Delete
-                </button>
+            const tr = document.createElement('tr');
+            tr.className = 'border-b hover:bg-gray-50';
+            tr.innerHTML = `
+                <td class="px-4 py-2">${escapeHtml(stop.zone || '')}</td>
+                <td class="px-4 py-2">${escapeHtml(stop.name || '')}</td>
+                <td class="px-4 py-2">${escapeHtml(stop._id)}</td>
+                <td class="px-4 py-2">
+                  <button class="bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition"
+                          onclick="deleteStop('${stop._id}')">Delete</button>
+                </td>
             `;
+            stopsTableBody.appendChild(tr);
         });
     }
 
     async function deleteStop(id) {
-        if (!confirm(`Are you sure you want to delete stop ID: ${id}?`)) {
-            return;
-        }
-        
+        if (!confirm('Delete stop ' + id + '?')) return;
         try {
-            // Assuming a DELETE request to /api/stops/:id
-            const response = await fetch(`/api/stops/${id}`, { method: 'DELETE' });
-
-            if (!response.ok) throw new Error('Failed to delete stop');
-
-            // Reload the data to update the table
-            loadStopsData();
-            
-        } catch (error) {
-            console.error("Error deleting stop:", error);
-            alert("Error: Could not delete stop.");
+            const res = await fetch(`/api/stops/${id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Failed to delete');
+            await loadStopsData();
+        } catch (err) {
+            console.error(err);
+            alert('Could not delete stop. Check server logs.');
         }
     }
 
+    // Add stop form
+    document.addEventListener('submit', async (e) => {
+      const form = e.target;
+      if (form && form.id === 'add-stop-form') {
+        e.preventDefault();
+        const name = form.elements['stop-name'].value.trim();
+        const zone = form.elements['stop-zone'].value;
+        const msg = document.getElementById('stop-form-message');
+        msg.classList.remove('hidden','text-green-600','text-red-600');
+        msg.textContent = 'Adding stop...';
 
-    // --- INITIALIZATION ---
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // 1. Set up navigation links
-        document.querySelectorAll('.nav-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const panelId = button.getAttribute('data-panel');
-                switchAdminPanel(panelId);
-            });
-        });
-
-        // 2. Set up the default panel (welcome or stops panel)
-        switchAdminPanel('stops-panel');
-
-        // 3. Set up Add Stop Form submission
-        const form = document.getElementById('add-stop-form');
-        const messageElement = document.getElementById('stop-form-message');
-        
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = form.elements['stop-name'].value;
-            const zone = form.elements['stop-zone'].value;
-            
-            messageElement.classList.remove('hidden', 'text-green-600', 'text-red-600');
-            messageElement.classList.add('text-gray-500');
-            messageElement.textContent = "Adding stop...";
-            
-            try {
-                // Assuming a POST request to /api/stops creates a new stop
-                const response = await fetch('/api/stops', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, zone })
-                });
-                
-                if (!response.ok) throw new Error('Failed to create new stop');
-
-                // Success feedback and reload
-                messageElement.classList.add('text-green-600');
-                messageElement.textContent = `Successfully added stop: ${name}.`;
-                form.reset(); // Clear the form
-                loadStopsData(); // Reload the table
-                
-            } catch (error) {
-                console.error("Error adding stop:", error);
-                messageElement.classList.add('text-red-600');
-                messageElement.textContent = "Error adding stop. Please check server logs.";
+        try {
+          const res = await fetch('/api/stops', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ name, zone })
+          });
+          if (!res.ok) {
+            // try seed fallback if server expects array
+            if (res.status === 404) {
+              // nothing to do — server missing endpoint
+              throw new Error('Endpoint /api/stops not implemented on server.');
             }
-        });
+            throw new Error('Failed to create stop');
+          }
+          msg.textContent = 'Stop added.';
+          msg.classList.add('text-green-600');
+          form.reset();
+          await loadStopsData();
+        } catch (err) {
+          console.error(err);
+          msg.textContent = 'Error adding stop. See console.';
+          msg.classList.add('text-red-600');
+        }
+      }
     });
 
+    // ----------------- BUSES -----------------
     async function loadBusesData() {
-    busesTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">Loading bus fleet...</td></tr>';
-    
-    try {
-        const response = await fetch('/api/buses');
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const buses = await response.json();
-        renderBusesTable(buses);
-    } catch (error) {
-        console.error("Error fetching buses:", error);
-        busesTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-red-600">Failed to load bus data.</td></tr>';
-    }
+        busesTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Loading buses...</td></tr>';
+        try {
+            const res = await fetch('/api/buses');
+            if (!res.ok) throw new Error('Network error');
+            const buses = await res.json();
+            renderBusesTable(buses);
+        } catch (err) {
+            console.error(err);
+            busesTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-600">Failed to load buses.</td></tr>';
+        }
     }
 
     function renderBusesTable(buses) {
         busesTableBody.innerHTML = '';
-        if (buses.length === 0) {
-            busesTableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No buses defined.</td></tr>';
+        if (!Array.isArray(buses) || buses.length === 0) {
+            busesTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">No buses defined.</td></tr>';
             return;
         }
-
         buses.forEach(bus => {
-            const row = busesTableBody.insertRow();
-            row.className = 'border-b hover:bg-gray-50';
-
-            row.insertCell().textContent = bus.busNumber;
-            row.insertCell().textContent = bus.model;
-            row.insertCell().textContent = bus.capacity;
-            row.insertCell().textContent = bus.driverName || 'N/A';
+            const tr = document.createElement('tr');
+            tr.className = 'border-b hover:bg-gray-50';
+            tr.innerHTML = `
+                <td class="px-4 py-2">${escapeHtml(bus.busNumber || '')}</td>
+                <td class="px-4 py-2">${escapeHtml(bus.model || '')}</td>
+                <td class="px-4 py-2">${escapeHtml(String(bus.capacity || ''))}</td>
+                <td class="px-4 py-2">${escapeHtml(bus.driverName || 'N/A')}</td>
+                <td class="px-4 py-2">
+                  <button class="bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition"
+                          onclick="deleteBus('${bus._id}')">Delete</button>
+                </td>
+            `;
+            busesTableBody.appendChild(tr);
         });
     }
 
+    // Add bus form
+    document.getElementById('add-bus-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('bus-form-message');
+      msg.classList.remove('hidden','text-green-600','text-red-600');
+      msg.textContent = 'Adding bus...';
+
+      const payload = {
+        busNumber: document.getElementById('busNumber').value.trim(),
+        model: document.getElementById('busModel').value.trim(),
+        driverName: document.getElementById('busDriver').value.trim(),
+        capacity: parseInt(document.getElementById('busCapacity').value, 10) || 40
+      };
+
+      try {
+        const res = await fetch('/api/buses/add-bus', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Failed to add bus');
+        msg.textContent = 'Bus added.';
+        msg.classList.add('text-green-600');
+        e.target.reset();
+        await loadBusesData();
+      } catch (err) {
+        console.error(err);
+        msg.textContent = 'Error adding bus. See console.';
+        msg.classList.add('text-red-600');
+      }
+    });
+
+    async function deleteBus(id) {
+      if (!confirm('Delete bus ' + id + '?')) return;
+      try {
+        const res = await fetch(`/api/buses/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to delete bus');
+        await loadBusesData();
+      } catch (err) {
+        console.error(err);
+        alert('Could not delete bus. See console.');
+      }
+    }
+
+    // ----------------- SCHEDULES -----------------
     async function loadSchedulesDependencies() {
-        // Fetch buses for the dropdown
+        // populate buses
         try {
-            const busResponse = await fetch('/api/buses');
-            const buses = await busResponse.json();
-            scheduleBusSelect.innerHTML = '<option value="">Select Bus</option>';
-            buses.forEach(bus => {
-                scheduleBusSelect.innerHTML += `<option value="${bus._id}">${bus.busNumber} (${bus.model})</option>`;
-            });
-        } catch (e) {
-            console.error("Failed to load buses for schedule form:", e);
+            const res = await fetch('/api/buses');
+            if (res.ok) {
+                const buses = await res.json();
+                scheduleBusSelect.innerHTML = '<option value="">Select Bus</option>';
+                buses.forEach(b => {
+                    const opt = document.createElement('option');
+                    opt.value = b._id;
+                    opt.textContent = `${b.busNumber} (${b.model})`;
+                    scheduleBusSelect.appendChild(opt);
+                });
+            }
+        } catch (err) {
+            console.error('Failed to load buses for schedule form', err);
         }
-        
-        // Fetch stops for the dropdown
+
+        // populate stops
         try {
-            const stopResponse = await fetch('/api/stops');
-            const stops = await stopResponse.json();
-            scheduleStopSelect.innerHTML = '<option value="">Select Stop</option>';
-            stops.forEach(stop => {
-                scheduleStopSelect.innerHTML += `<option value="${stop._id}">${stop.name} (${stop.zone})</option>`;
-            });
-        } catch (e) {
-            console.error("Failed to load stops for schedule form:", e);
+            const res = await fetch('/api/stops');
+            if (res.ok) {
+                const stops = await res.json();
+                scheduleStopSelect.innerHTML = '<option value="">Select Stop</option>';
+                stops.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s._id;
+                    opt.textContent = `${s.name} (${s.zone})`;
+                    scheduleStopSelect.appendChild(opt);
+                });
+            }
+        } catch (err) {
+            console.error('Failed to load stops for schedule form', err);
         }
     }
 
+    // load schedules list
     async function loadSchedulesData() {
-        schedulesTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Loading schedules...</td></tr>';
-        
+        schedulesTableBody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">Loading schedules...</td></tr>';
         try {
-            const response = await fetch('/api/buses/schedules');
-            if (!response.ok) throw new Error('Network response was not ok');
-            
-            const schedules = await response.json();
+            const res = await fetch('/api/buses/schedules');
+            if (!res.ok) throw new Error('Network error');
+            const schedules = await res.json();
             renderSchedulesTable(schedules);
-        } catch (error) {
-            console.error("Error fetching schedules:", error);
-            schedulesTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-600">Failed to load schedules.</td></tr>';
+        } catch (err) {
+            console.error(err);
+            schedulesTableBody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-600">Failed to load schedules.</td></tr>';
         }
     }
 
     function renderSchedulesTable(schedules) {
         schedulesTableBody.innerHTML = '';
-        if (schedules.length === 0) {
-            schedulesTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">No upcoming schedules.</td></tr>';
+        if (!Array.isArray(schedules) || schedules.length === 0) {
+            schedulesTableBody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">No upcoming schedules.</td></tr>';
             return;
         }
-
-        schedules.forEach(schedule => {
-            const date = new Date(schedule.date).toLocaleDateString();
-            
-            const row = schedulesTableBody.insertRow();
-            row.className = 'border-b hover:bg-gray-50';
-
-            row.insertCell().textContent = date;
-            row.insertCell().textContent = schedule.departureTime;
-            // Bus detail comes from populated 'bus' object
-            row.insertCell().textContent = `${schedule.bus.model} (${schedule.bus.busNumber})`;
-            // Stop detail comes from populated 'stop' object
-            row.insertCell().textContent = `${schedule.stop.name} (${schedule.stop.zone})`;
-            row.insertCell().textContent = schedule.status;
+        schedules.forEach(s => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-b hover:bg-gray-50';
+            const date = new Date(s.date).toLocaleDateString();
+            tr.innerHTML = `
+                <td class="px-4 py-2">${escapeHtml(date)}</td>
+                <td class="px-4 py-2">${escapeHtml(s.departureTime || '')}</td>
+                <td class="px-4 py-2">${escapeHtml((s.bus && s.bus.busNumber) ? `${s.bus.busNumber} (${s.bus.model || ''})` : 'N/A')}</td>
+                <td class="px-4 py-2">${escapeHtml((s.stop && s.stop.name) ? `${s.stop.name} (${s.stop.zone || ''})` : 'N/A')}</td>
+                <td class="px-4 py-2">${escapeHtml(s.status || '')}</td>
+                <td class="px-4 py-2">
+                  <button class="bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition"
+                          onclick="deleteSchedule('${s._id}')">Delete</button>
+                </td>
+            `;
+            schedulesTableBody.appendChild(tr);
         });
     }
+
+    // Assign schedule form
+    document.getElementById('add-schedule-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('schedule-form-message');
+      msg.classList.remove('hidden','text-green-600','text-red-600');
+      msg.textContent = 'Assigning schedule...';
+
+      const payload = {
+        busId: document.getElementById('schedule-bus').value,
+        stopId: document.getElementById('schedule-stop').value,
+        date: document.getElementById('schedule-date').value,
+        departureTime: document.getElementById('schedule-time').value,
+        driverName: '' // optional — will be filled by server or UI later
+      };
+
+      if (!payload.busId || !payload.stopId || !payload.date || !payload.departureTime) {
+        msg.textContent = 'Please fill all fields';
+        msg.classList.add('text-red-600');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/buses/assign', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(()=>({}));
+          throw new Error(body.error || 'Failed to assign schedule');
+        }
+        msg.textContent = 'Schedule assigned.';
+        msg.classList.add('text-green-600');
+        e.target.reset();
+        await loadSchedulesData();
+      } catch (err) {
+        console.error(err);
+        msg.textContent = 'Error assigning schedule. See console.';
+        msg.classList.add('text-red-600');
+      }
+    });
+
+    async function deleteSchedule(id) {
+      if (!confirm('Delete schedule ' + id + '?')) return;
+      try {
+        const res = await fetch(`/api/buses/schedule/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to delete schedule');
+        await loadSchedulesData();
+      } catch (err) {
+        console.error(err);
+        alert('Could not delete schedule. See console.');
+      }
+    }
+
+    // ----------------- Utilities -----------------
+    function escapeHtml(str) {
+      if (!str && str !== 0) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', () => {
+      // default to stops panel
+      switchAdminPanel('stops-panel');
+    });
+
   </script>
 
 </body>

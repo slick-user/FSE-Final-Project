@@ -26,4 +26,14 @@ router.post('/seed', async (req, res) => {
   res.json({ ok: true, count: stops.length });
 });
 
+// DELETE /api/stop/:stopId - Delete all schedules for a specific stop
+router.delete('/stop/:stopId', async (req, res) => {
+  try {
+    const count = await Schedule.deleteMany({ stop: req.params.stopId });
+    res.json({ message: `Removed ${count.deletedCount} schedules` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
