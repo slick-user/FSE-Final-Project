@@ -21,7 +21,6 @@ router.post('/assign', async (req, res) => {
   const existing = await Schedule.findOne({ bus: busId, date: new Date(date), departureTime });
   if (existing) return res.status(409).json({ error: 'Bus already assigned at that time' });
 
-  // If you want route duration estimation, call ORS here (omitted for brevity)
   const schedule = new Schedule({
     bus: bus._id,
     stop: stop._id,
@@ -185,8 +184,6 @@ router.delete('/routes/delete/:id', async (req, res) => {
     try {
         const route = await Route.findByIdAndDelete(req.params.id);
         if (!route) return res.status(404).json({ error: "Route not found" });
-
-        // NOTE: In a complete system, you would also remove any references to this route from Stops or Schedules.
 
         res.json({ message: "Route removed successfully" });
     } catch (err) { res.status(500).json({ error: err.message }); }

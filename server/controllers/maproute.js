@@ -1,26 +1,63 @@
 const express = require('express');
+
 const { User } = require('../config/db.js');
 const Stop = require('../config/stop.js');
 const Bus = require('../config/bus.js');
 const Schedule = require('../config/schedule.js');
 const { getRouteBetween } = require('../controllers/ors.js');
+
 const router = express.Router();
 
 // FAST UNIVERSITY COORDS
 const FAST_COORDS = { lat: 33.6405, lng: 73.0372 };
 
-// Helper: Convert time string to minutes since midnight
+// Helper Functions 
 function timeToMinutes(timeStr) {
   const [hours, minutes] = timeStr.split(':').map(Number);
   return hours * 60 + minutes;
 }
 
-// Helper: Format time in 12-hour format
+//Format time in 12-hour format
 function formatTime(timeStr) {
   const [hours, minutes] = timeStr.split(':').map(Number);
   const period = hours >= 12 ? 'PM' : 'AM';
   const displayHours = hours % 12 || 12;
   return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+}
+
+function selectBestSchedule(schedules, requestedTimeMinutes) {
+  let bestSchedule = null;
+  let smallestFutureDiff = Infinity;
+  let bestPastSchedule = null;
+  let largestPastDiff = -Infinity;
+  let isToday = false;
+
+  for (const schedule of schedules) {
+    const departureMinutes = timeToMinutes(schedule.departureTime);
+    const diff = departureMinutes - requestedTimeMinutes;
+
+    if (diff >= 0) {
+      // future bus
+      if (diff < smallestFutureDiff) {
+        bestSchedule = schedule;
+        smallestFutureDiff = diff;
+        isToday = true;
+      }
+    } else {
+      // past bus
+      if (diff > largestPastDiff) {
+        bestPastSchedule = schedule;
+        largestPastDiff = diff;
+      }
+    }
+  }
+
+  if (!bestSchedule) {
+    bestSchedule = bestPastSchedule;
+    isToday = false;
+  }
+
+  return { bestSchedule, isToday };
 }
 
 // GET /api/route?stopId=...&time=...
@@ -53,27 +90,12 @@ router.get('/', async (req, res) => {
 
     // Find the best matching schedule
     const requestedMinutes = timeToMinutes(time);
-    let bestSchedule = null;
-    let smallestDiff = Infinity;
-    let isToday = false;
-
-    for (const schedule of schedules) {
-      const departureMinutes = timeToMinutes(schedule.departureTime);
-      const diff = departureMinutes - requestedMinutes;
-      
-      // Prefer buses departing after requested time (diff > 0) or closest one before
-      if (diff >= 0 && diff < smallestDiff) {
-        bestSchedule = schedule;
-        smallestDiff = diff;
-        isToday = true;
-      } else if (diff < 0 && Math.abs(diff) < Math.abs(smallestDiff) && !isToday) {
-        // If no future bus, pick the most recent past one
-        bestSchedule = schedule;
-        smallestDiff = diff;
-      }
-    }
+    const { bestSchedule: selectedSchedule, isToday: scheduleIsToday } = selectBestSchedule(schedules, requestedMinutes);
 
     // If no match found, suggest earliest next day bus
+    let bestSchedule = selectedSchedule;
+    let isToday = scheduleIsToday;
+
     if (!bestSchedule) {
       bestSchedule = schedules[0]; // Fallback to first schedule
       isToday = false;
@@ -218,3 +240,4 @@ router.get('/users/:id/reservations', async (req, res) => {
 });
 
 module.exports = router;
+module.exports.helpers = { timeToMinutes, formatTime, selectBestSchedule };

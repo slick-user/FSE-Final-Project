@@ -35,13 +35,11 @@ router.get("/admin", (req, res) => {
     res.sendFile(path.join(clientPath, "admin.html")); 
 });
 
-router.get('/admin/routes', (req, res) => {
-    // You'll need to create this file
-    res.sendFile(path.join(clientPath, 'admin-panels/routes-panel.html'));
+router.get('/admin/routes', (req, res) => { 
+  res.sendFile(path.join(clientPath, 'admin-panels/routes-panel.html'));
 });
 
 router.get('/admin/stops', (req, res) => {
-    // You'll need to create this file
     res.sendFile(path.join(clientPath, 'admin-panels/stops-panel.html'));
 });
 
