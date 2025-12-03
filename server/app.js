@@ -1,40 +1,45 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const path = require("path");
-
-const routes = require("./routes/routes.js");
-const { connectDB } = require("./config/db.js");
-
-// Controllers (acting as routers)
-const stopsRoutes = require("./controllers/stops.js");
-const mapRouteRoutes = require("./controllers/maproute.js");
-const busRoutes = require("./controllers/bus.js");
-
-// Load .env
-dotenv.config({ override: true, path: ".env" });
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const config = require('./config/env');
+const { connectDB } = require('./config/db');
+const routes = require('./routes');
+const { errorHandler, notFound } = require('./middleware/errorHandler');
 
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: config.nodeEnv === 'production' 
+    ? process.env.ALLOWED_ORIGINS?.split(',') 
+    : '*',
+  credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// API Routes
-app.use("/api/stops", stopsRoutes);
-app.use("/api/route", mapRouteRoutes);
-app.use("/api/buses", busRoutes);
-
-// Static Files
-app.use(express.static(path.join(__dirname, "../client")));
-app.use("/static", express.static(path.join(__dirname, "../client", "static")));
-
-// Connect to MongoDB
-if (process.env.NODE_ENV !== "test") {
-  connectDB();
+// Request logging (dev only)
+if (config.nodeEnv === 'development') {
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+  });
 }
 
-// Base Routes
-app.use("/", routes);
+// Static files
+app.use(express.static(path.join(__dirname, '../client')));
+app.use('/static', express.static(path.join(__dirname, '../client/static')));
+
+// Routes
+app.use(routes);
+
+// Error handlers (must be last)
+app.use(notFound);
+app.use(errorHandler);
+
+// Database connection
+if (config.nodeEnv !== 'test') {
+  connectDB();
+}
 
 module.exports = app;

@@ -1,148 +1,119 @@
 <style>
-  /* Custom Modal CSS for the overlay and positioning */
-  .modal { 
-      display: none; /* Hidden by default */
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      background-color: rgba(0, 0, 0, 0.5); /* Black background with 50% opacity */
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-  }
-  .modal-open { 
-      display: flex; /* Show when active */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
   }
 
-  /* Form Card Styling (Kept compact for modal) */
+  .modal-open {
+    display: flex;
+  }
+
   .form-card {
     border-radius: 0.5rem;
     padding: 1.5rem;
-    box-shadow: none; 
+    box-shadow: none;
     max-width: 300px;
     margin-left: auto;
     margin-right: auto;
   }
 </style>
 
-<div id="auth-modal" 
-     class="modal">
-  
+<div id="auth-modal" class="modal">
+
   <div id="auth-content-container" class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-xl relative">
-      
-      <button 
-          class="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
-          onclick="toggleModal()"
-      >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-               stroke="currentColor" class="w-6 h-6">
-            
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-          </svg>
-      </button>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <button class="absolute top-4 right-4 text-gray-600 hover:text-gray-900" onclick="toggleModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="w-6 h-6">
 
-        <section>
-          <h2 class="text-3xl font-bold mb-6 text-gray-900 text-center">Login</h2>
-              
-          <div class="form-card border border-gray-300">
-            <form class="space-y-4">
-              <div>
-                <label for="modal-login-student-id" class="block text-sm font-medium text-gray-700">Student ID</label>
-                <input type="text" 
-                       id="modal-login-student-id" 
-                       value="" 
-                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"
-                />
-              </div>
-                  
-              <div>
-                <label for="modal-login-password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" 
-                       id="modal-login-password" 
-                       value="" 
-                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"
-                />
-              </div>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+      </svg>
+    </button>
 
-              <button type="submit" 
-                      class="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
-              >
-                Login
-              </button>
-                  
-              <div class="text-center">
-                <a href="#" id="forgot-password-link" class="text-sm text-fastBlue hover:text-fastGold">Forgot Password?</a>
-              </div>
-                </form>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+      <section>
+        <h2 class="text-3xl font-bold mb-6 text-gray-900 text-center">Login</h2>
+
+        <div class="form-card border border-gray-300">
+          <form class="space-y-4">
+            <div>
+              <label for="modal-login-student-id" class="block text-sm font-medium text-gray-700">Student ID</label>
+              <input type="text" id="modal-login-student-id" value=""
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue" />
             </div>
-        </section>
-          
-        <hr class="lg:hidden my-4 border-gray-200">
 
-        <section>
-          <h2 class="text-3xl font-bold mb-6 text-gray-900 text-center">Sign Up</h2>
+            <div>
+              <label for="modal-login-password" class="block text-sm font-medium text-gray-700">Password</label>
+              <input type="password" id="modal-login-password" value=""
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue" />
+            </div>
 
-          <div class="form-card border border-gray-300">
-            <form class="space-y-4">
-              <div>
-                <label for="modal-signup-name" class="block text-sm font-medium text-gray-700">Name</label>
-                <input type="text" 
-                       id="modal-signup-name" 
-                       placeholder="Enter your name"
-                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"
-                />
+            <button type="submit" class="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+              Login
+            </button>
+
+            <div class="text-center">
+              <a href="#" id="forgot-password-link" class="text-sm text-fastBlue hover:text-fastGold">Forgot
+                Password?</a>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <hr class="lg:hidden my-4 border-gray-200">
+
+      <section>
+        <h2 class="text-3xl font-bold mb-6 text-gray-900 text-center">Sign Up</h2>
+
+        <div class="form-card border border-gray-300">
+          <form class="space-y-4" id="signup-form" enctype="multipart/form-data" method="POST">
+            <div>
+              <label for="modal-signup-name" class="block text-sm font-medium text-gray-700">Name</label>
+              <input type="text" id="modal-signup-name" name="name" placeholder="Enter your name"
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue" />
+            </div>
+
+            <div>
+              <label for="modal-signup-student-id" class="block text-sm font-medium text-gray-700">Student ID</label>
+              <input type="text" id="modal-signup-student-id" name="rollNo" placeholder="Enter your roll number"
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue" />
+            </div>
+
+            <div>
+              <label for="modal-signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+              <input type="password" id="modal-signup-password" name="password" placeholder="Enter your password" class="mt-1 block w-full p-2 border border-gray-300 rounded-md 
+                              focus:ring-fastBlue focus:border-fastBlue" />
+            </div>
+
+            <div class="flex flex-col space-y-2">
+              <label class="block text-sm font-medium text-gray-700">Upload Student ID Card Photo</label>
+              <div class="flex items-center justify-between">
+                <input type="file" id="modal-signup-profile-photo" name="profilePhoto" accept="image/*" class="hidden" />
+
+                <button type="button" id="photo-upload-trigger"
+                  class="bg-fastBlue text-white text-sm px-3 py-1.5 rounded hover:bg-blue-700 transition"
+                  onclick="document.getElementById('modal-signup-profile-photo').click()">
+                  Choose File
+                </button>
+
+                <span id="photo-filename" class="text-sm text-gray-500 truncate max-w-[150px]">No file chosen</span>
               </div>
+            </div>
 
-              <div>
-                <label for="modal-signup-student-id" class="block text-sm font-medium text-gray-700">Student ID</label>
-                <input type="text" 
-                       id="modal-signup-student-id" 
-                       placeholder="Enter your roll number"
-                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-fastBlue focus:border-fastBlue"
-                />
-              </div>
+            <button type="submit" class="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"> Sign
+              Up </button>
+          </form>
+        </div>
+      </section>
 
-              <div>
-                <label for="modal-signup-password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" 
-                       id="modal-signup-password" 
-                       placeholder="Enter your password"
-                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md 
-                              focus:ring-fastBlue focus:border-fastBlue"
-                />
-              </div>
 
-<div class="flex flex-col space-y-2">
-    <label class="block text-sm font-medium text-gray-700">Upload Student ID Card Photo</label>
-    <div class="flex items-center justify-between">
-        <input type="file" 
-               id="modal-signup-photo" 
-               name="studentPhoto"
-               accept="image/*"
-               class="hidden" 
-        />
-        
-        <button type="button" 
-                id="photo-upload-trigger"
-                class="bg-fastBlue text-white text-sm px-3 py-1.5 rounded hover:bg-blue-700 transition"
-                onclick="document.getElementById('modal-signup-photo').click()">
-            Choose File
-        </button>
-
-        <span id="photo-filename" class="text-sm text-gray-500 truncate max-w-[150px]">No file chosen</span>
-    </div>
-</div>
-
-              <button type="submit" 
-                      class="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
-              > Sign Up </button>
-            </form>
-          </div>
-        </section>
-
-      
     </div>
   </div>
 </div>
