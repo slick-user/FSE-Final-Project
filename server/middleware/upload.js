@@ -9,9 +9,9 @@ const storage = new CloudinaryStorage({
   params: {
     folder: 'bus-app-profiles',
     allowed_formats: config.upload.allowedFormats,
-    transformation: [{ 
-      width: 600, 
-      height: 600, 
+    transformation: [{
+      width: 600,
+      height: 600,
       crop: 'fill',
       quality: 'auto'
     }]
@@ -19,9 +19,9 @@ const storage = new CloudinaryStorage({
 });
 
 // Configure multer
-const upload = multer({ 
+const upload = multer({
   storage,
-  limits: { 
+  limits: {
     fileSize: config.upload.maxFileSize
   },
   fileFilter: (req, file, cb) => {
@@ -29,7 +29,9 @@ const upload = multer({
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only JPEG and PNG allowed.'));
+      const error = new Error('Invalid file type. Only JPEG and PNG allowed.');
+      error.statusCode = 400;
+      cb(error);
     }
   }
 });

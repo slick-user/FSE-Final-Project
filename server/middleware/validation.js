@@ -6,9 +6,9 @@ const { body, param, query, validationResult } = require('express-validator');
 exports.validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       success: false,
-      error: 'Validation failed', 
+      error: 'Validation failed',
       details: errors.array().map(err => ({
         field: err.param,
         message: err.msg,
@@ -25,16 +25,16 @@ exports.registerRules = [
     .trim()
     .notEmpty().withMessage('Name is required')
     .isLength({ min: 2, max: 100 }).withMessage('Name must be 2-100 characters'),
-  
+
   body('rollNo')
     .trim()
     .notEmpty().withMessage('Roll number is required')
     .matches(/^[A-Za-z0-9-]+$/).withMessage('Invalid roll number format'),
-  
+
   body('password')
     .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
     .matches(/^(?=.*[A-Za-z])(?=.*\d)/).withMessage('Password must contain letters and numbers'),
-  
+
   body('role')
     .optional()
     .isIn(['student', 'admin', 'driver']).withMessage('Invalid role')
@@ -62,15 +62,15 @@ exports.busRules = [
     .trim()
     .notEmpty().withMessage('Bus number is required')
     .isLength({ max: 20 }).withMessage('Bus number too long'),
-  
+
   body('model')
     .trim()
     .notEmpty().withMessage('Model is required'),
-  
+
   body('driverName')
     .trim()
     .notEmpty().withMessage('Driver name is required'),
-  
+
   body('capacity')
     .optional()
     .isInt({ min: 1, max: 100 }).withMessage('Capacity must be between 1 and 100')
@@ -80,13 +80,13 @@ exports.busRules = [
 exports.scheduleRules = [
   body('busId')
     .isMongoId().withMessage('Invalid bus ID'),
-  
+
   body('stopId')
     .isMongoId().withMessage('Invalid stop ID'),
-  
+
   body('date')
     .isISO8601().withMessage('Invalid date format'),
-  
+
   body('departureTime')
     .matches(/^([01]\d|2[0-3]):([0-5]\d)$/).withMessage('Invalid time format (use HH:MM)')
 ];
@@ -96,10 +96,10 @@ exports.stopRules = [
   body('name')
     .trim()
     .notEmpty().withMessage('Stop name is required'),
-  
+
   body('zone')
     .isIn(['Islamabad', 'Rawalpindi']).withMessage('Zone must be Islamabad or Rawalpindi'),
-  
+
   body('location.coordinates')
     .isArray({ min: 2, max: 2 }).withMessage('Coordinates must be [lng, lat]')
     .custom((value) => {
@@ -112,13 +112,13 @@ exports.stopRules = [
 exports.reservationRules = [
   body('scheduleId')
     .isMongoId().withMessage('Invalid schedule ID'),
-  
+
   body('seatNumber')
     .isInt({ min: 1 }).withMessage('Seat number must be a positive integer')
 ];
 
 // MongoDB ID parameter validation
-exports.mongoIdParam = (paramName = 'id') => 
+exports.mongoIdParam = (paramName = 'id') =>
   param(paramName).isMongoId().withMessage(`Invalid ${paramName}`);
 
 // Query validation

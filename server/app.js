@@ -10,8 +10,8 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: config.nodeEnv === 'production' 
-    ? process.env.ALLOWED_ORIGINS?.split(',') 
+  origin: config.nodeEnv === 'production'
+    ? process.env.ALLOWED_ORIGINS?.split(',')
     : '*',
   credentials: true
 }));
@@ -26,12 +26,12 @@ if (config.nodeEnv === 'development') {
   });
 }
 
+// Routes (MUST come before static files to prevent shadowing)
+app.use(routes);
+
 // Static files
 app.use(express.static(path.join(__dirname, '../client')));
 app.use('/static', express.static(path.join(__dirname, '../client/static')));
-
-// Routes
-app.use(routes);
 
 // Error handlers (must be last)
 app.use(notFound);

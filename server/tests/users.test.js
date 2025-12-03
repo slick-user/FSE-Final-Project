@@ -1,7 +1,8 @@
 jest.mock('../config/db.js', () => ({
-  connectDB: jest.fn(),
-  User: require('./models').User
+  connectDB: jest.fn()
 }));
+
+jest.mock('../models/User.js', () => require('./models').User);
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn().mockResolvedValue('$2b$10$hashedpassword'),
