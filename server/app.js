@@ -5,6 +5,7 @@ const config = require('./config/env');
 const { connectDB } = require('./config/db');
 const routes = require('./routes');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
+const { ensureTodaySchedules, startDailyScheduleJob } = require('./services/dailySchedule');
 
 const app = express();
 
@@ -40,6 +41,10 @@ app.use(errorHandler);
 // Database connection
 if (config.nodeEnv !== 'test') {
   connectDB();
+  setTimeout(() => {
+    ensureTodaySchedules().catch(() => {});
+    startDailyScheduleJob();
+  }, 2000);
 }
 
 module.exports = app;

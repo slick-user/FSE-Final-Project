@@ -4,10 +4,7 @@ const Stop = require('../models/Stop.js');
 const { asyncHandler } = require('../middleware/errorHandler.js');
 const { getTodayStart } = require('../utils/timeHelpers.js');
 
-/**
- * Get all schedules
- * GET /api/schedules
- */
+// Get all schedules [GET /api/schedules]
 exports.getAll = asyncHandler(async (req, res) => {
   const { date, status, busId, stopId } = req.query;
   
@@ -29,10 +26,7 @@ exports.getAll = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Get single schedule
- * GET /api/schedules/:id
- */
+// Get single schedule [GET /api/schedules/:id]
 exports.getOne = asyncHandler(async (req, res) => {
   const schedule = await Schedule.findById(req.params.id)
     .populate('bus')
@@ -51,12 +45,9 @@ exports.getOne = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Create new schedule (assign bus)
- * POST /api/schedules
- */
+// Create new schedule (assign bus) [POST /api/schedules]
 exports.create = asyncHandler(async (req, res) => {
-  const { busId, stopId, date, departureTime, routeName } = req.body;
+  const { busId, stopId, date, departureTime, routeName, recurringDaily } = req.body;
   
   // Validate bus and stop exist
   const [bus, stop] = await Promise.all([
@@ -98,7 +89,8 @@ exports.create = asyncHandler(async (req, res) => {
     stop: stopId,
     date: new Date(date),
     departureTime,
-    routeName: routeName || `${stop.zone} - ${stop.name}`
+    routeName: routeName || `${stop.zone} - ${stop.name}`,
+    recurringDaily: !!recurringDaily
   });
   
   await schedule.populate(['bus', 'stop']);
@@ -110,24 +102,36 @@ exports.create = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Update schedule
- * PUT /api/schedules/:id
- */
+// Update schedule [PUT /api/schedules/:id] 
 exports.update = asyncHandler(async (req, res) => {
-  const schedule = await Schedule.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true, runValidators: true }
-  ).populate(['bus', 'stop']);
-  
-  if (!schedule) {
+  const { status } = req.body;
+
+  const existing = await Schedule.findById(req.params.id).populate(['bus', 'stop']);
+  if (!existing) {
     return res.status(404).json({
       success: false,
       error: 'Schedule not found'
     });
   }
-  
+
+  if (status === 'completed') {
+    const scheduledAt = new Date(existing.date);
+    const parts = (existing.departureTime || '00:00').split(':');
+    scheduledAt.setHours(parseInt(parts[0], 10) || 0, parseInt(parts[1], 10) || 0, 0, 0);
+    if (new Date() < scheduledAt) {
+      return res.status(400).json({
+        success: false,
+        error: 'Cannot complete a schedule before its departure time'
+      });
+    }
+  }
+
+  const schedule = await Schedule.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true, runValidators: true }
+  ).populate(['bus', 'stop']);
+ 
   res.json({
     success: true,
     message: 'Schedule updated successfully',
@@ -135,10 +139,7 @@ exports.update = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Delete schedule
- * DELETE /api/schedules/:id
- */
+// Delete schedule [DELETE /api/schedules/:id]
 exports.delete = asyncHandler(async (req, res) => {
   const schedule = await Schedule.findByIdAndDelete(req.params.id);
   

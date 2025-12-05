@@ -3,10 +3,7 @@ const routeService = require('../services/routeService.js');
 const reservationService = require('../services/reservationService.js');
 const { formatTime } = require('../utils/timeHelpers');
 
-/**
- * Find bus for route
- * GET /api/route/find?stopId=xxx&time=HH:MM
- */
+// Find bus for route [GET /api/route/find?stopId=xxx&time=HH:MM]
 exports.findBus = asyncHandler(async (req, res) => {
   const { stopId, time } = req.query;
   
@@ -46,10 +43,7 @@ exports.findBus = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Reserve seat
- * POST /api/route/reserve
- */
+// Reserve seat [POST /api/route/reserve]
 exports.reserve = asyncHandler(async (req, res) => {
   const { scheduleId, seatNumber } = req.body;
   const userId = req.userId || req.body.userId; // Fallback for legacy clients
@@ -77,10 +71,7 @@ exports.reserve = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Cancel reservation
- * POST /api/route/cancel
- */
+// Cancel reservation [POST /api/route/cancel]
 exports.cancel = asyncHandler(async (req, res) => {
   const { scheduleId, seatNumber } = req.body;
   const userId = req.userId || req.body.userId;
@@ -97,10 +88,7 @@ exports.cancel = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Get user reservations
- * GET /api/route/reservations
- */
+// Get user reservations [GET /api/route/reservations]
 exports.getMyReservations = asyncHandler(async (req, res) => {
   const reservations = await reservationService.getUserReservations(req.userId);
   

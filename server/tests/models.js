@@ -2,21 +2,44 @@ module.exports = {
   User: class User {
     constructor(data) { Object.assign(this, data); }
     save() { return Promise.resolve(this); }
-    static create(data) { return Promise.resolve({ ...data, _id: 'u_mock' }); }
+    toObject() {
+      const obj = { ...this };
+      delete obj.toObject;
+      delete obj.save;
+      return obj;
+    }
+    static create(data) {
+      const user = { ...data, _id: 'u_mock' };
+      user.toObject = function () {
+        const obj = { ...this };
+        delete obj.toObject;
+        return obj;
+      };
+      return Promise.resolve(user);
+    }
     static find() { return Promise.resolve([{ name: 'Alice', rollNo: 'R1' }]); }
     static findOne(filter) {
       if (filter.rollNo === 'R1') {
-        return Promise.resolve({
-          _id: 'u1',
-          name: 'Alice',
-          rollNo: 'R1',
-          // This is bcrypt hash of "pass123" with salt rounds 10
-          password: '$2b$10$CwTycUXWue0Thq9StjUM0uJ8/jHJmEgppT4h9V1iSWP2LZzZPvRKG',
-          role: 'student',
-          save: jest.fn().mockResolvedValue(true)
-        });
+        return {
+          select: jest.fn().mockResolvedValue({
+            _id: 'u1',
+            name: 'Alice',
+            rollNo: 'R1',
+            password: '$2b$10$CwTycUXWue0Thq9StjUM0uJ8/jHJmEgppT4h9V1iSWP2LZzZPvRKG',
+            role: 'student',
+            toObject() {
+              return {
+                _id: 'u1',
+                name: 'Alice',
+                rollNo: 'R1',
+                role: 'student'
+              };
+            },
+            save: jest.fn().mockResolvedValue(true)
+          })
+        };
       }
-      return Promise.resolve(null);
+      return { select: jest.fn().mockResolvedValue(null) };
     }
   },
 

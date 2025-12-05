@@ -6,6 +6,7 @@ const busRoutes = require('./bus.routes');
 const stopRoutes = require('./stop.routes');
 const scheduleRoutes = require('./schedule.route');
 const routeRoutes = require('./route.routes');
+const driverRoutes = require('./driver.routes');
 
 const authController = require('../controllers/auth.controller.js');
 const upload = require('../middleware/upload');
@@ -19,6 +20,7 @@ router.use('/api/buses', busRoutes);
 router.use('/api/stops', stopRoutes);
 router.use('/api/schedules', scheduleRoutes);
 router.use('/api/route', routeRoutes);
+router.use('/api/drivers', driverRoutes);
 
 // Legacy auth aliases for clients still using /api/*
 router.post('/api/register', upload.single('profilePhoto'), registerRules, validate, authController.register);

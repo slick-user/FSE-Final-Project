@@ -307,11 +307,14 @@
         if (!user || !user._id) return;
 
         try {
-          const res = await fetch(`/api/route/users/${user._id}/reservations`);
+          const res = await fetch('/api/route/reservations', {
+            headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('token') || '') }
+          });
           const data = await res.json();
-          if (data.reservedSeats && data.reservedSeats.length > 0) {
+          const reserved = data.reservedSeats || data.data || [];
+          if (reserved.length > 0) {
             // Show details to user
-            const r = data.reservedSeats[0]; // or show a list if >1
+            const r = reserved[0]; // or show a list if >1
             document.getElementById("bus-result-container").innerHTML =
               `<div class="bus-found-banner">
                 <h3 class="text-3xl mb-2 text-white">Active Reservation</h3>
@@ -361,7 +364,7 @@
       let busStopMarker = null;
 
       async function showRoute(stopId, requestedDepartureTime) {
-        const res = await fetch(`/api/route?stopId=${stopId}&time=${requestedDepartureTime}`);
+        const res = await fetch(`/api/route/find?stopId=${stopId}&time=${requestedDepartureTime}`);
         if (!res.ok) {
           // Attempt to parse the response body, but use a generic error message if it fails
           const errorText = await res.text();
@@ -377,7 +380,7 @@
         }
         const data = await res.json();
         
-        if (data.error || !data.bus_details) {
+        if (data.error || !(data.bus_details || data.busDetails)) {
           document.getElementById('bus-result-container').innerHTML =
                     `<div class="bus-found-banner" style="background-image: none; background-color: #ef4444;"> 
                         <h3 class="text-3xl font-extrabold text-white mb-4">Allocation Error</h3>
@@ -387,7 +390,15 @@
           return;
         }
         
-        const bus = data.bus_details;
+        const bus = data.busDetails || data.bus_details;
+        bus.is_today = bus.is_today ?? bus.isToday;
+        bus.route_name = bus.route_name ?? bus.routeName;
+        bus.plate_number = bus.plate_number ?? bus.plateNumber;
+        bus.driver_name = bus.driver_name ?? bus.driverName;
+        bus.departure_time = bus.departure_time ?? bus.departureTime;
+        bus.distance_km = bus.distance_km ?? bus.distanceKm;
+        bus.travel_time_min = bus.travel_time_min ?? bus.travelTimeMin;
+        const scheduleId = data.scheduleId || data._id;
 
         if (routeLayer) map.removeLayer(routeLayer);
         if (busStopMarker) map.removeLayer(busStopMarker);
@@ -442,8 +453,8 @@
                         <span class="bottom-key-2"></span>
                     </button>
                     <button class="btn bg-black text-white after:bg-black"
-                            data-schedule-id="${data._id}"
-                            onclick="reserveSeat('${data._id}', getSelectedSeatNumber())">
+                            data-schedule-id="${scheduleId}"
+                            onclick="reserveSeat('${scheduleId}', getSelectedSeatNumber())">
                         <span class="top-key"></span>
                         <span class="text">Reserve Seat</span>
                         <span class="bottom-key-1"></span>
@@ -474,8 +485,11 @@
           try {
             const res = await fetch('/api/route/reserve', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId: user._id, scheduleId, seatNumber }),
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+              },
+              body: JSON.stringify({ scheduleId, seatNumber }),
             });
             let data;
             try { 
@@ -509,10 +523,13 @@
           if (!user) return alert('Please login');
 
           try {
-            const res = await fetch('/api/route/reservations/cancel', {
+            const res = await fetch('/api/route/cancel', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId: user._id, scheduleId, seatNumber }),
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+              },
+              body: JSON.stringify({ scheduleId, seatNumber }),
             });
             const data = await res.json();
             if (data.success) {
@@ -535,11 +552,14 @@
         async function showReservations() {
           const user = JSON.parse(localStorage.getItem('user'));
           if (!user) return alert('Please login');
-          const res = await fetch(`/api/route/users/${user._id}/reservations`);
+          const res = await fetch('/api/route/reservations', {
+            headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('token') || '') }
+          });
           const data = await res.json();
-          if (data.reservedSeats) {
+          const reserved = data.reservedSeats || data.data || [];
+          if (reserved) {
             // update your DOM to list seats & schedules
-            console.log(data.reservedSeats);
+            console.log(reserved);
           }
         }
 

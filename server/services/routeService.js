@@ -6,9 +6,7 @@ const { timeToMinutes, formatTime, isToday } = require('../utils/timeHelpers');
 
 const FAST_COORDS = { lat: 33.6405, lng: 73.0372 };
 
-/**
- * Get route from FAST to stop using OpenRouteService
- */
+// Get route from FAST to stop using OpenRouteService
 async function getRouteGeoJSON(stopCoordinates) {
   const url = 'https://api.openrouteservice.org/v2/directions/driving-car/geojson';
   
@@ -35,9 +33,7 @@ async function getRouteGeoJSON(stopCoordinates) {
   }
 }
 
-/**
- * Find best schedule for given stop and time
- */
+// Find best schedule for given stop and time
 function selectBestSchedule(schedules, requestedTimeMinutes) {
   let bestFuture = null;
   let bestPast = null;
@@ -70,9 +66,7 @@ function selectBestSchedule(schedules, requestedTimeMinutes) {
   };
 }
 
-/**
- * Find bus allocation for stop and time
- */
+// Find bus allocation for stop and time
 exports.findBusAllocation = async (stopId, requestedTime) => {
   // Get stop details
   const stop = await Stop.findById(stopId);

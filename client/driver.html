@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAST UTBS – Driver Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            fastBlue: "#0055A4",
+            fastGold: "#FFF714",
+            fastCyan: "#00E0E0"
+          }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  
+  <!-- TOP NAVBAR -->
+  <header class="bg-black text-white flex justify-between items-center px-8 py-4 shadow-xl">
+    <div class="flex items-center space-x-3">
+      <img src="static/images/logo.png" class="w-10 h-10 rounded-full" alt="logo" />
+      <h1 class="text-xl font-bold">Driver Dashboard</h1>
+    </div>
+    <button 
+      onclick="logoutDriver()" 
+      class="bg-fastGold text-black px-4 py-1 rounded hover:bg-yellow-400 transition"
+    >
+      Logout
+    </button>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <div class="container mx-auto p-6 max-w-7xl">
+    
+    <!-- PROFILE SECTION -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <h2 class="text-2xl font-bold mb-4 text-fastBlue">👤 Driver Profile</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Profile Photo & Info -->
+        <div class="flex flex-col items-center">
+          <div class="w-32 h-32 rounded-full bg-gray-300 overflow-hidden mb-3">
+            <img id="driver-photo" src="" alt="Driver Photo" class="w-full h-full object-cover" />
+          </div>
+          <h3 id="driver-name" class="text-xl font-semibold">Loading...</h3>
+          <p id="driver-roll" class="text-gray-600">Roll No: ---</p>
+          <span id="driver-role" class="mt-2 px-3 py-1 bg-fastBlue text-white rounded-full text-sm">Driver</span>
+        </div>
+
+        <!-- Driver Details -->
+        <div class="col-span-2">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-sm font-medium text-gray-600">License Number</label>
+              <p id="driver-license" class="text-lg font-semibold">---</p>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-600">Phone Number</label>
+              <p id="driver-phone" class="text-lg font-semibold">---</p>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-600">Assigned Bus</label>
+              <p id="driver-bus" class="text-lg font-semibold">---</p>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-600">Availability Status</label>
+              <div class="flex items-center space-x-3 mt-1">
+                <button 
+                  id="status-toggle" 
+                  onclick="toggleAvailability()"
+                  class="px-4 py-2 rounded font-semibold transition"
+                >
+                  Loading...
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROUTES SECTION -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <h2 class="text-2xl font-bold mb-4 text-fastBlue">🚌 Assigned Routes</h2>
+      
+      <div id="routes-container" class="space-y-4">
+        <p class="text-gray-500 text-center py-8">Loading routes...</p>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS SECTION -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h2 class="text-2xl font-bold mb-4 text-fastBlue">🔔 Notifications</h2>
+      
+      <div id="notifications-container" class="space-y-3">
+        <p class="text-gray-500 text-center py-4">No new notifications</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="driver.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FAST - UTBS</title>
+    <title>FAST - UBTS</title>
     
     <link rel="stylesheet" href="static/css/style.css">
     
@@ -41,7 +41,7 @@
           alt="FAST Transport Logo"
           class="w-10 h-10 rounded-full"
         />
-        <h1 class="text-2xl font-bold">FAST - UTBS</h1>
+        <h1 class="text-2xl font-bold">FAST - UBTS</h1>
       </div>
       <nav class="space-x-6">
         <a href="index.html" class="hover:text-fastGold">Home</a>
@@ -395,10 +395,11 @@
           }
           
           const stopsData = await response.json();
+          const stops = Array.isArray(stopsData) ? stopsData : (stopsData.data || []);
           
           // 1. Filter the data into two separate arrays
-          const islamabadStops = stopsData.filter(stop => stop.zone === 'Islamabad');
-          const rawalpindiStops = stopsData.filter(stop => stop.zone === 'Rawalpindi');
+          const islamabadStops = stops.filter(stop => stop.zone === 'Islamabad');
+          const rawalpindiStops = stops.filter(stop => stop.zone === 'Rawalpindi');
           
           // 2. Function to render stops for a specific body element
           const renderStops = (data, bodyElement) => {

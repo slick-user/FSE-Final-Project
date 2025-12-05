@@ -1,9 +1,7 @@
 const User = require('../models/User');
 const Schedule = require('../models/Schedule');
 
-/**
- * Reserve a seat for a user
- */
+// Reserve a seat for a user
 exports.reserveSeat = async (userId, scheduleId, seatNumber) => {
   // Find user and schedule
   const [user, schedule] = await Promise.all([
@@ -71,9 +69,7 @@ exports.reserveSeat = async (userId, scheduleId, seatNumber) => {
   };
 };
 
-/**
- * Cancel a reservation
- */
+// Cancel a reservation
 exports.cancelReservation = async (userId, scheduleId, seatNumber) => {
   const [user, schedule] = await Promise.all([
     User.findById(userId),
@@ -116,9 +112,7 @@ exports.cancelReservation = async (userId, scheduleId, seatNumber) => {
   };
 };
 
-/**
- * Get user's active reservations
- */
+// Get user's active reservations
 exports.getUserReservations = async (userId) => {
   const user = await User.findById(userId)
     .populate({
@@ -130,10 +124,9 @@ exports.getUserReservations = async (userId) => {
     throw new Error('User not found');
   }
   
-  // Filter only active reservations
-  const activeReservations = user.reservedSeats.filter(
-    r => r.status === 'reserved'
-  );
+    // Filter only active reservations
+  const seats = Array.isArray(user.reservedSeats) ? user.reservedSeats : [];
+  const activeReservations = seats.filter(r => r.status === 'reserved');
   
   return activeReservations;
 };

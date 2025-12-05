@@ -22,7 +22,26 @@ describe('User API Routes', () => {
     expect(res.body.success).toBeDefined();
     expect(res.body.user).toBeDefined();
     expect(res.body.user.name).toBe('Bob');
+  });
 
+  it('POST /api/register should register a driver', async () => {
+    const res = await request(app)
+      .post('/api/register')
+      .send({ name: 'Driver Dan', rollNo: 'D100', password: 'driver123', role: 'driver', disability: false });
+
+    expect(res.statusCode === 201 || res.statusCode === 200).toBeTruthy();
+    expect(res.body.success).toBeTruthy();
+    expect(res.body.user.role).toBe('driver');
+  });
+
+  it('POST /api/register should register an admin', async () => {
+    const res = await request(app)
+      .post('/api/register')
+      .send({ name: 'Admin Alice', rollNo: 'A001', password: 'admin123', role: 'admin', disability: false });
+
+    expect(res.statusCode === 201 || res.statusCode === 200).toBeTruthy();
+    expect(res.body.success).toBeTruthy();
+    expect(res.body.user.role).toBe('admin');
   });
 
   it('POST /api/login should login existing user', async () => {

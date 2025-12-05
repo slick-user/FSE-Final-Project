@@ -30,6 +30,10 @@ const scheduleSchema = new mongoose.Schema({
     enum: ['scheduled', 'running', 'completed', 'cancelled'], 
     default: 'scheduled' 
   },
+  recurringDaily: {
+    type: Boolean,
+    default: true
+  },
   date: { 
     type: Date, 
     required: [true, 'Date is required']

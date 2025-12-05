@@ -13,10 +13,7 @@ const generateToken = (userId, role) => {
   );
 };
 
-/**
- * Register new user
- * POST /api/auth/register
- */
+//Register new user | POST /api/auth/register
 exports.register = asyncHandler(async (req, res) => {
   const { name, rollNo, password, role, disability } = req.body;
 
@@ -57,10 +54,7 @@ exports.register = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Login user
- * POST /api/auth/login
- */
+// Login user | POST /api/auth/login
 exports.login = asyncHandler(async (req, res) => {
   const { rollNo, password } = req.body;
 
@@ -100,10 +94,7 @@ exports.login = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Get current user
- * GET /api/auth/me
- */
+//Get current user | GET /api/auth/me
 exports.getMe = asyncHandler(async (req, res) => {
   const user = await User.findById(req.userId)
     .select('-password')
@@ -115,10 +106,7 @@ exports.getMe = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Request password reset
- * POST /api/auth/forgot-password
- */
+//Request password reset | POST /api/auth/forgot-password
 exports.forgotPassword = asyncHandler(async (req, res) => {
   const { rollNo } = req.body;
 

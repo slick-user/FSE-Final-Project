@@ -2,6 +2,7 @@ const request = require('supertest');
 
 // Create mocks with proper chaining BEFORE requiring anything
 const mockBusFind = jest.fn().mockReturnValue({
+  populate: jest.fn().mockReturnThis(),
   sort: jest.fn().mockResolvedValue([
     { _id: 'b1', busNumber: 'B1', model: 'ModelX', driverName: 'John', capacity: 40 },
     { _id: 'b2', busNumber: 'B2', model: 'ModelY', driverName: 'Doe', capacity: 30 }
@@ -21,7 +22,7 @@ const mockScheduleFind = jest.fn().mockReturnValue({
 });
 
 // Mock the modules
-jest.mock('../config/bus.js', () => {
+jest.mock('../models/Bus.js', () => {
   return class Bus {
     constructor(data) { Object.assign(this, data); }
     save() { return Promise.resolve(this); }
@@ -35,7 +36,7 @@ jest.mock('../config/bus.js', () => {
   };
 });
 
-jest.mock('../config/stop.js', () => {
+jest.mock('../models/Stop.js', () => {
   return class Stop {
     constructor(data) { Object.assign(this, data); }
     static find = mockStopFind;
@@ -52,7 +53,7 @@ jest.mock('../config/stop.js', () => {
   };
 });
 
-jest.mock('../config/schedule.js', () => {
+jest.mock('../models/Schedule.js', () => {
   return class Schedule {
     constructor(data) { Object.assign(this, data); }
     save() { return Promise.resolve(this); }
@@ -90,14 +91,15 @@ describe('Buses API', () => {
     }
     
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBe(2);
-    expect(res.body[0].busNumber).toBe('B1');
+expect(res.body.success).toBeTruthy();
+expect(Array.isArray(res.body.data)).toBe(true);
+expect(res.body.count).toBeDefined();
+expect(res.body.data[0].busNumber).toBe('B1');
   });
 
-  it('POST /api/buses/assign assigns a bus', async () => {
+  it('POST /api/schedules assigns a bus schedule', async () => {
     const res = await request(app)
-      .post('/api/buses/assign')
+      .post('/api/schedules')
       .send({
         busId: 'b1',
         stopId: 'stop1',
@@ -106,12 +108,8 @@ describe('Buses API', () => {
         date: '2025-12-05'
       });
 
-    if (res.statusCode !== 200) {
-      console.log('ERROR:', res.body);
-    }
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body.ok).toBe(true);
-    expect(res.body.schedule).toBeDefined();
+    expect(res.statusCode).toBe(201);
+    expect(res.body.success).toBeTruthy();
+    expect(res.body.data).toBeDefined();
   });
 });

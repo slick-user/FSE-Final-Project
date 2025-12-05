@@ -2,17 +2,17 @@ const Bus = require('../models/Bus.js');
 const Schedule = require('../models/Schedule.js');
 const { asyncHandler } = require('../middleware/errorHandler.js');
 
-/**
- * Get all buses
- * GET /api/buses
- */
+// Get all buses [GET /api/buses]
 exports.getAll = asyncHandler(async (req, res) => {
-  const { status } = req.query;
-  const filter = status ? { status } : {};
+  const { status, linkedUser } = req.query;
+  const filter = {};
+  if (status) filter.status = status;
+  if (linkedUser) filter.linkedUser = linkedUser;
   
   const buses = await Bus.find(filter)
     .populate('linkedUser', 'name rollNo')
-    .sort({ busNumber: 1 });
+    .sort({ busNumber: 1 })
+    .lean();
   
   res.json({
     success: true,
@@ -21,13 +21,11 @@ exports.getAll = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Get single bus
- * GET /api/buses/:id
- */
+//Get single bus | GET /api/buses/:id
 exports.getOne = asyncHandler(async (req, res) => {
   const bus = await Bus.findById(req.params.id)
-    .populate('linkedUser', 'name rollNo');
+    .populate('linkedUser', 'name rollNo')
+    .lean();
   
   if (!bus) {
     return res.status(404).json({
@@ -42,10 +40,7 @@ exports.getOne = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Create new bus
- * POST /api/buses
- */
+// Create new bus [POST /api/buses]
 exports.create = asyncHandler(async (req, res) => {
   const bus = await Bus.create(req.body);
   
@@ -56,10 +51,7 @@ exports.create = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Update bus
- * PUT /api/buses/:id
- */
+// Update bus [PUT /api/buses/:id]
 exports.update = asyncHandler(async (req, res) => {
   const bus = await Bus.findByIdAndUpdate(
     req.params.id,
@@ -81,10 +73,7 @@ exports.update = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Delete bus
- * DELETE /api/buses/:id
- */
+// Delete bus [DELETE /api/buses/:id]
 exports.delete = asyncHandler(async (req, res) => {
   const bus = await Bus.findByIdAndDelete(req.params.id);
   
@@ -104,10 +93,7 @@ exports.delete = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Get bus schedules
- * GET /api/buses/:id/schedules
- */
+// Get bus schedules [GET /api/buses/:id/schedules]
 exports.getSchedules = asyncHandler(async (req, res) => {
   const bus = await Bus.findById(req.params.id);
   if (!bus) {
@@ -119,7 +105,8 @@ exports.getSchedules = asyncHandler(async (req, res) => {
   
   const schedules = await Schedule.find({ bus: req.params.id })
     .populate('stop')
-    .sort({ date: 1, departureTime: 1 });
+    .sort({ date: 1, departureTime: 1 })
+    .lean();
   
   res.json({
     success: true,
